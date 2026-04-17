@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>About — QueueWatch SA</title>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;800&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="style.css"/>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="logo" onclick="window.location='index.html'" style="cursor:pointer">
+    <div class="logo-dot"></div>
+    QueueWatch<span style="color:var(--accent)">SA</span>
+  </div>
+  <ul class="nav-links">
+    <li><a href="branches.html">Branches</a></li>
+    <li><a href="admin.html">Admin</a></li>
+    <li><a href="about.html" class="active">About</a></li>
+  </ul>
+  <div style="display:flex;gap:0.6rem">
+    <a href="auth.html" class="btn btn-outline">Login</a>
+    <a href="auth.html" class="btn btn-primary">Register</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-tag">🇿🇦 OUR MISSION</div>
+  <h1>Built for the<br><span>people of SA.</span></h1>
+  <p class="hero-sub">QueueWatch SA is a community-driven platform that gives citizens real-time visibility into queue conditions at public service offices — before they leave home.</p>
+</section>
+
+<div class="main">
+
+  <!-- PROBLEM -->
+  <div class="about-section">
+    <div class="about-text">
+      <div class="section-title" style="margin-bottom:1rem">// The Problem</div>
+      <h3 class="about-heading">Hours wasted. Every single day.</h3>
+      <p class="about-body">Millions of South Africans visit Home Affairs, SASSA offices, clinics, and licensing departments every year. With no way to check conditions before arriving, people take time off work, arrange transport, and travel long distances — only to find 3-hour queues or system downtime.</p>
+      <p class="about-body">This uncertainty hits the most vulnerable people hardest. Those who can least afford to waste a day are the ones doing it most often.</p>
+    </div>
+    <div class="about-visual">
+      <div class="about-stat-big">
+        <span style="font-size:3.5rem;font-weight:800;color:var(--vbusy)">3+</span>
+        <span style="font-family:'Space Mono',monospace;font-size:0.8rem;color:var(--muted);margin-top:0.3rem">avg hours wasted<br>per visit</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- SOLUTION -->
+  <div class="about-section" style="flex-direction:row-reverse">
+    <div class="about-text">
+      <div class="section-title" style="margin-bottom:1rem">// Our Solution</div>
+      <h3 class="about-heading">Community-powered information.</h3>
+      <p class="about-body">QueueWatch SA lets people already at a branch share real-time updates with everyone else. No government integration needed — just citizens helping citizens.</p>
+      <p class="about-body">Search for your nearest branch, see the latest wait time reports, and decide whether it's worth going today.</p>
+    </div>
+    <div class="about-visual">
+      <div class="about-stat-big">
+        <span style="font-size:3.5rem;font-weight:800;color:var(--quiet)">Live</span>
+        <span style="font-family:'Space Mono',monospace;font-size:0.8rem;color:var(--muted);margin-top:0.3rem">community reports<br>updated in real time</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- HOW IT WORKS -->
+  <div style="margin-bottom:3rem">
+    <div class="section-title" style="margin-bottom:1.5rem">// How It Works</div>
+    <div class="steps-grid">
+      <div class="step-card">
+        <div class="step-num">01</div>
+        <h4 class="step-title">Search your branch</h4>
+        <p class="step-body">Find any Home Affairs, SASSA, clinic, or licensing office near you using our search and filter tools.</p>
+      </div>
+      <div class="step-card">
+        <div class="step-num">02</div>
+        <h4 class="step-title">Check the queue</h4>
+        <p class="step-body">See real-time reports submitted by people currently at the branch — including wait times and service status.</p>
+      </div>
+      <div class="step-card">
+        <div class="step-num">03</div>
+        <h4 class="step-title">Submit a report</h4>
+        <p class="step-body">Already there? Take 10 seconds to submit a report and help the next person plan their visit better.</p>
+      </div>
+      <div class="step-card">
+        <div class="step-num">04</div>
+        <h4 class="step-title">Plan smarter</h4>
+        <p class="step-body">Use the daily average and peak times to choose the best time to visit and avoid the longest queues.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- TEAM -->
+  <div style="margin-bottom:3rem">
+    <div class="section-title" style="margin-bottom:1.5rem">// The Team</div>
+    <div class="team-grid">
+      <div class="team-card">
+        <div class="team-avatar">JP</div>
+        <div class="team-name">Dev Squad</div>
+        <div class="team-role">DSW02A1 Group Project</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CTA -->
+  <div class="about-cta">
+    <h3 style="font-size:1.8rem;font-weight:800;margin-bottom:0.8rem">Ready to skip the queue?</h3>
+    <p style="color:var(--muted);margin-bottom:1.5rem;max-width:400px;margin-left:auto;margin-right:auto">Join the community and help fellow South Africans plan smarter.</p>
+    <div style="display:flex;gap:0.8rem;justify-content:center;flex-wrap:wrap">
+      <a href="auth.html" class="btn btn-primary" style="padding:0.8rem 1.8rem;text-decoration:none">Create an Account</a>
+      <a href="index.html" class="btn btn-outline" style="padding:0.8rem 1.8rem;text-decoration:none">Browse Branches</a>
+    </div>
+  </div>
+
+</div>
+
+</body>
+</html>

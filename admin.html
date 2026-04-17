@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Admin — QueueWatch SA</title>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;800&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="style.css"/>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="logo" onclick="window.location='index.html'" style="cursor:pointer">
+    <div class="logo-dot"></div>
+    QueueWatch<span style="color:var(--accent)">SA</span>
+  </div>
+  <ul class="nav-links">
+    <li><a href="branches.html">Branches</a></li>
+    <li><a href="admin.html" class="active">Admin</a></li>
+    <li><a href="about.html">About</a></li><li><a href="contact.html">Contact</a></li>
+  </ul>
+  <div style="display:flex;align-items:center;gap:0.6rem">
+    <span style="font-family:'Space Mono',monospace;font-size:0.72rem;color:var(--accent);background:rgba(245,197,24,0.1);border:1px solid rgba(245,197,24,0.3);padding:0.3rem 0.7rem;border-radius:4px">ADMIN</span>
+    <a href="index.html" class="btn btn-outline" style="font-size:0.8rem">Logout</a>
+  </div>
+</nav>
+
+<div class="main" style="padding-top:2rem">
+
+  <!-- HEADER -->
+  <div style="margin-bottom:2rem">
+    <div class="hero-tag">⚙️ MODERATION PANEL</div>
+    <h2 style="font-size:2rem;font-weight:800;margin-top:0.8rem">Admin Dashboard</h2>
+    <p style="color:var(--muted);margin-top:0.4rem">Review and moderate user-submitted queue reports.</p>
+  </div>
+
+  <!-- STATS ROW -->
+  <div class="admin-stats">
+    <div class="admin-stat-card">
+      <div class="admin-stat-num">34</div>
+      <div class="admin-stat-label">Reports Today</div>
+    </div>
+    <div class="admin-stat-card">
+      <div class="admin-stat-num" style="color:var(--vbusy)">3</div>
+      <div class="admin-stat-label">Flagged Reports</div>
+    </div>
+    <div class="admin-stat-card">
+      <div class="admin-stat-num">8</div>
+      <div class="admin-stat-label">Active Branches</div>
+    </div>
+    <div class="admin-stat-card">
+      <div class="admin-stat-num">127</div>
+      <div class="admin-stat-label">Registered Users</div>
+    </div>
+  </div>
+
+  <!-- REPORTS TABLE -->
+  <div class="section-title" style="margin-bottom:1rem">// All Reports — Today</div>
+
+  <div class="admin-table-wrap">
+    <table class="admin-table">
+      <thead>
+        <tr>
+          <th>User</th>
+          <th>Branch</th>
+          <th>Status</th>
+          <th>Wait</th>
+          <th>Time</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody id="adminTableBody"></tbody>
+    </table>
+  </div>
+
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script>
+  const adminReports = [
+    { user:"Thabo M.",   branch:"Home Affairs Benoni",    status:"Very Busy", wait:120, time:"09:14", flagged:false },
+    { user:"Lerato K.",  branch:"Germiston Clinic",       status:"Busy",      wait:60,  time:"09:02", flagged:true  },
+    { user:"Sipho D.",   branch:"SASSA Boksburg Office",  status:"Quiet",     wait:15,  time:"08:50", flagged:false },
+    { user:"Nomsa P.",   branch:"Home Affairs Benoni",    status:"Very Busy", wait:90,  time:"08:44", flagged:false },
+    { user:"Ruan V.",    branch:"Edenvale Licensing",     status:"Quiet",     wait:10,  time:"08:30", flagged:false },
+    { user:"Zanele T.",  branch:"Brakpan Clinic",         status:"Busy",      wait:75,  time:"08:21", flagged:true  },
+    { user:"Mike L.",    branch:"SASSA Thembisa",         status:"Very Busy", wait:150, time:"08:10", flagged:true  },
+    { user:"Ayanda B.",  branch:"Kempton Licensing",      status:"Quiet",     wait:20,  time:"07:58", flagged:false },
+  ];
+
+  const statusCls = {
+    "Quiet":"status-quiet","Busy":"status-busy","Very Busy":"status-vbusy","System Offline":"status-offline"
+  };
+
+  const tbody = document.getElementById('adminTableBody');
+
+  adminReports.forEach((r, i) => {
+    const tr = document.createElement('tr');
+    if (r.flagged) tr.classList.add('flagged-row');
+    tr.innerHTML = `
+      <td style="font-weight:700">${r.user} ${r.flagged ? '<span class="flag-tag">⚑ flagged</span>' : ''}</td>
+      <td style="color:var(--muted)">${r.branch}</td>
+      <td><span class="status-badge ${statusCls[r.status]}" style="font-size:0.65rem">${r.status}</span></td>
+      <td style="font-family:'Space Mono',monospace;font-size:0.85rem">${r.wait} min</td>
+      <td style="font-family:'Space Mono',monospace;font-size:0.85rem;color:var(--muted)">${r.time}</td>
+      <td>
+        <button class="admin-btn admin-btn-delete" onclick="deleteReport(this, ${i})">Remove</button>
+      </td>
+    `;
+    tbody.appendChild(tr);
+  });
+
+  function deleteReport(btn, i) {
+    const row = btn.closest('tr');
+    row.style.opacity = '0';
+    row.style.transition = 'opacity 0.3s';
+    setTimeout(() => row.remove(), 300);
+    showToast('🗑️ Report removed.');
+  }
+
+  function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent   = msg;
+    t.style.display = 'block';
+    setTimeout(() => { t.style.display = 'none'; }, 3000);
+  }
+</script>
+</body>
+</html>

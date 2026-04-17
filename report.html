@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Submit Report — QueueWatch SA</title>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;800&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="style.css"/>
+</head>
+<body>
+<nav>
+  <div class="logo" onclick="window.location='index.html'" style="cursor:pointer">
+    <div class="logo-dot"></div>
+    QueueWatch<span style="color:var(--accent)">SA</span>
+  </div>
+  <ul class="nav-links">
+    <li><a href="index.html">Branches</a></li>
+    <li><a href="admin.html">Admin</a></li>
+    <li><a href="about.html">About</a></li>
+  </ul>
+  <div style="display:flex;gap:0.6rem">
+    <a href="auth.html" class="btn btn-outline">Login</a>
+    <a href="auth.html" class="btn btn-primary">Register</a>
+  </div>
+</nav>
+
+<div class="main" style="padding-top:2rem;max-width:640px">
+  <a href="index.html" class="back-link">← Back to branches</a>
+  <div class="hero-tag" style="margin-bottom:1rem">📋 SUBMIT A REPORT</div>
+  <h2 style="font-size:2rem;font-weight:800;margin-bottom:0.5rem">How's the queue?</h2>
+  <p style="color:var(--muted);margin-bottom:2rem;font-size:0.95rem">You're helping thousands of South Africans plan smarter. Takes 30 seconds.</p>
+
+  <div style="background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:2rem">
+
+    <div class="form-group">
+      <label class="form-label">Which branch are you at?</label>
+      <select class="form-select" id="repBranch">
+        <option value="">— Select a branch —</option>
+        <option>Home Affairs Benoni</option>
+        <option>SASSA Boksburg Office</option>
+        <option>Kempton Park Licensing</option>
+        <option>Germiston Clinic</option>
+        <option>Home Affairs Alberton</option>
+        <option>SASSA Thembisa Office</option>
+        <option>Edenvale Licensing Dept</option>
+        <option>Brakpan Community Clinic</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Current Status</label>
+      <div class="status-options">
+        <div class="status-opt" data-val="Quiet"          onclick="selectStatus(this)">🟢 Quiet</div>
+        <div class="status-opt" data-val="Busy"           onclick="selectStatus(this)">🟡 Busy</div>
+        <div class="status-opt" data-val="Very Busy"      onclick="selectStatus(this)">🔴 Very Busy</div>
+        <div class="status-opt" data-val="System Offline" onclick="selectStatus(this)">⚫ System Offline</div>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Estimated Wait Time</label>
+      <select class="form-select" id="repWait">
+        <option value="15">~15 minutes</option>
+        <option value="30">~30 minutes</option>
+        <option value="60">~1 hour</option>
+        <option value="90">~1.5 hours</option>
+        <option value="120">~2 hours</option>
+        <option value="180">3+ hours</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Any notes? <span style="color:var(--muted)">(optional)</span></label>
+      <textarea class="form-control" id="repNote" rows="3" placeholder="e.g. Queue is outside the building, system is slow…" style="resize:vertical"></textarea>
+    </div>
+
+    <button class="btn btn-primary" style="width:100%;padding:0.9rem;font-size:1rem" onclick="submitReport()">
+      Submit Report
+    </button>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+  let selectedStatus = '';
+
+  function selectStatus(el) {
+    document.querySelectorAll('.status-opt').forEach(o => o.className = 'status-opt');
+    const v = el.dataset.val;
+    selectedStatus = v;
+    const map = { 'Quiet':'quiet','Busy':'busy','Very Busy':'vbusy','System Offline':'offline' };
+    el.classList.add('selected-' + (map[v] || 'quiet'));
+  }
+
+  function submitReport() {
+    const branch = document.getElementById('repBranch').value;
+    if (!branch)         { showToast('⚠️ Please select a branch.'); return; }
+    if (!selectedStatus) { showToast('⚠️ Please select a status.'); return; }
+    showToast('✅ Report submitted — thank you!');
+    setTimeout(() => window.location.href = 'index.html', 1800);
+  }
+
+  function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg; t.style.display = 'block';
+    setTimeout(() => t.style.display = 'none', 3000);
+  }
+</script>
+</body>
+</html>

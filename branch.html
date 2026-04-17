@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Branch Detail — QueueWatch SA</title>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;800&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="style.css"/>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="logo" onclick="window.location='index.html'" style="cursor:pointer">
+    <div class="logo-dot"></div>
+    QueueWatch<span style="color:var(--accent)">SA</span>
+  </div>
+  <ul class="nav-links">
+    <li><a href="index.html">Branches</a></li>
+    <li><a href="admin.html">Admin</a></li>
+    <li><a href="about.html">About</a></li>
+    <li><a href="contact.html">Contact</a></li>
+  </ul>
+  <div style="display:flex;gap:0.6rem">
+    <a href="auth.html" class="btn btn-outline">Login</a>
+    <a href="auth.html" class="btn btn-primary">Register</a>
+  </div>
+</nav>
+
+<!-- BACK -->
+<div class="main" style="padding-top:2rem">
+  <a href="index.html" class="back-link">← Back to all branches</a>
+
+  <!-- BRANCH HEADER -->
+  <div class="branch-hero" id="branchHero">
+    <div>
+      <div class="branch-type" id="detailType" style="margin-bottom:0.6rem"></div>
+      <h2 id="detailName" style="font-size:clamp(1.6rem,4vw,2.8rem);font-weight:800;letter-spacing:-0.02em"></h2>
+      <div style="display:flex;align-items:center;gap:0.8rem;margin-top:0.8rem;flex-wrap:wrap">
+        <div class="status-badge" id="detailBadge"></div>
+        <span style="font-family:'Space Mono',monospace;font-size:0.75rem;color:var(--muted)" id="detailUpdated"></span>
+      </div>
+    </div>
+    <div class="wait-hero-box" id="waitBox">
+      <div class="wait-number" id="detailWaitNum" style="font-size:3.5rem"></div>
+      <div class="wait-unit"   id="detailWaitUnit" style="font-size:0.9rem;margin-top:0.3rem"></div>
+      <div style="font-size:0.7rem;color:var(--muted);margin-top:0.4rem;font-family:'Space Mono',monospace">avg today</div>
+    </div>
+  </div>
+
+  <!-- TWO COL -->
+  <div class="detail-grid">
+
+    <!-- REPORTS -->
+    <div>
+      <div class="section-header" style="margin-bottom:1rem">
+        <span class="section-title">// Recent Reports</span>
+        <a href="auth.html" class="btn btn-primary" style="font-size:0.8rem;padding:0.4rem 0.9rem;text-decoration:none">+ Add Report</a>
+      </div>
+      <div id="reportsList"></div>
+    </div>
+
+    <!-- SIDEBAR -->
+    <div>
+      <!-- MAP PLACEHOLDER -->
+      <div class="section-title" style="margin-bottom:0.8rem">// Location</div>
+      <div class="map-placeholder">
+        <div class="map-pin">📍</div>
+        <div style="font-weight:700;margin-bottom:0.3rem" id="mapBranchName"></div>
+        <div style="font-size:0.8rem;color:var(--muted)">Google Maps will load here</div>
+        <div style="font-size:0.72rem;color:var(--muted);margin-top:0.3rem;font-family:'Space Mono',monospace">Requires Google Maps API key</div>
+      </div>
+
+      <!-- TODAYS SUMMARY -->
+      <div class="section-title" style="margin:1.5rem 0 0.8rem">// Today's Summary</div>
+      <div class="summary-card">
+        <div class="summary-row">
+          <span>Total reports</span>
+          <strong id="sumReports"></strong>
+        </div>
+        <div class="summary-row">
+          <span>Peak time</span>
+          <strong>08:00 – 10:00</strong>
+        </div>
+        <div class="summary-row">
+          <span>Avg wait today</span>
+          <strong id="sumAvg"></strong>
+        </div>
+        <div class="summary-row">
+          <span>Last update</span>
+          <strong id="sumLast"></strong>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script src="script.js"></script>
+<script>
+  // ─── FAKE REPORTS ───
+  const fakeReports = [
+    { user:"Thabo M.",  time:"09:14",  wait:120, status:"Very Busy",  note:"Queue outside the building" },
+    { user:"Lerato K.", time:"08:52",  wait:90,  status:"Very Busy",  note:"System slow but working"    },
+    { user:"Sipho D.",  time:"08:30",  wait:60,  status:"Busy",       note:"About 40 people ahead"      },
+    { user:"Nomsa P.",  time:"07:55",  wait:45,  status:"Busy",       note:"Arrived early, not too bad" },
+    { user:"Ruan V.",   time:"07:30",  wait:20,  status:"Quiet",      note:"Very quiet this early"      },
+  ];
+
+  const statusMap = {
+    "Quiet":          { cls:"status-quiet",   cssVar:"var(--quiet)"   },
+    "Busy":           { cls:"status-busy",    cssVar:"var(--busy)"    },
+    "Very Busy":      { cls:"status-vbusy",   cssVar:"var(--vbusy)"   },
+    "System Offline": { cls:"status-offline", cssVar:"var(--offline)" },
+  };
+
+  function waitLabel(w) {
+    if (w === 0) return { num:'—', unit:'system down' };
+    if (w < 60)  return { num:w,   unit:'min wait' };
+    const h = (w/60).toFixed(1).replace('.0','');
+    return { num:h, unit: h==='1'?'hr wait':'hrs wait' };
+  }
+
+  // Load branch from localStorage (set when card was clicked)
+  const raw = localStorage.getItem('selectedBranch');
+  const branch = raw ? JSON.parse(raw) : {
+    id:1, name:"Home Affairs Benoni", type:"Home Affairs",
+    status:"Very Busy", wait:120, reports:7, updated:"8 min ago"
+  };
+
+  const s  = statusMap[branch.status] || statusMap["System Offline"];
+  const wl = waitLabel(branch.wait);
+
+  document.getElementById('detailName').textContent    = branch.name;
+  document.getElementById('detailType').textContent    = branch.type;
+  document.getElementById('detailUpdated').textContent = 'Last updated ' + branch.updated;
+  document.getElementById('detailWaitNum').textContent  = wl.num;
+  document.getElementById('detailWaitUnit').textContent = wl.unit;
+  document.getElementById('mapBranchName').textContent  = branch.name;
+  document.getElementById('sumReports').textContent     = branch.reports;
+  document.getElementById('sumAvg').textContent         = wl.num + ' ' + wl.unit;
+  document.getElementById('sumLast').textContent        = branch.updated;
+
+  const badge = document.getElementById('detailBadge');
+  badge.textContent = branch.status;
+  badge.className   = 'status-badge ' + s.cls;
+
+  document.getElementById('waitBox').style.setProperty('--status-color', s.cssVar);
+  document.getElementById('detailWaitNum').style.color = s.cssVar;
+
+  // Render reports
+  const list = document.getElementById('reportsList');
+  fakeReports.forEach(r => {
+    const rs = statusMap[r.status] || statusMap["System Offline"];
+    const wlr = waitLabel(r.wait);
+    const div = document.createElement('div');
+    div.className = 'report-item';
+    div.innerHTML = `
+      <div class="report-item-top">
+        <div>
+          <span class="report-user">${r.user}</span>
+          <span class="report-time">${r.time}</span>
+        </div>
+        <div class="status-badge ${rs.cls}" style="font-size:0.65rem">${r.status}</div>
+      </div>
+      <div style="display:flex;align-items:baseline;gap:0.3rem;margin:0.5rem 0">
+        <span style="font-size:1.4rem;font-weight:800;color:${rs.cssVar}">${wlr.num}</span>
+        <span style="font-size:0.75rem;color:var(--muted);font-family:'Space Mono',monospace">${wlr.unit}</span>
+      </div>
+      <div class="report-note">"${r.note}"</div>
+    `;
+    list.appendChild(div);
+  });
+</script>
+</body>
+</html>
