@@ -1,115 +1,100 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>QueueWatch SA</title>
-  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;800&display=swap" rel="stylesheet"/>
-  <link rel="stylesheet" href="style.css"/>
-</head>
-<body>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>QueueWatch SA</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <nav>
+      <div
+        class="logo"
+        onclick="window.location = 'index.html'"
+        style="cursor: pointer"
+      >
+        <div class="logo-dot"></div>
+        QueueWatch<span style="color: var(--accent)">SA</span>
+      </div>
+      <ul class="nav-links">
+        <li><a href="branches.html">Branches</a></li>
+        <li><a href="admin.html">Admin</a></li>
+        <li><a href="about.html">About</a></li>
+        <li><a href="contact.html">Contact</a></li>
+      </ul>
+      <div style="display: flex; gap: 0.6rem">
+        <a href="auth.html" class="btn btn-outline">Login</a>
+        <a href="auth.html" class="btn btn-primary">Register</a>
+      </div>
+    </nav>
 
-<!-- NAV -->
-<nav>
-  <div class="logo" onclick="window.location='index.html'" style="cursor:pointer">
-    <div class="logo-dot"></div>
-    QueueWatch<span style="color:var(--accent)">SA</span>
-  </div>
-  <ul class="nav-links">
-    <li><a href="branches.html">Branches</a></li>
-    <li><a href="admin.html">Admin</a></li>
-    <li><a href="about.html">About</a></li>
-    <li><a href="contact.html">Contact</a></li>
-  </ul>
-  <div style="display:flex;gap:0.6rem">
-    <a href="auth.html" class="btn btn-outline">Login</a>
-    <a href="auth.html" class="btn btn-primary">Register</a>
-  </div>
-</nav>
-
-<!-- HERO -->
-<section class="hero">
-  <div class="hero-tag">🇿🇦 COMMUNITY-DRIVEN · REAL-TIME</div>
-  <h1>Skip the wait.<br><span>Know before you go.</span></h1>
-  <p class="hero-sub">Real-time queue updates for Home Affairs, SASSA, clinics, and licensing offices — reported by people already there.</p>
-  <div class="search-wrap">
-    <input class="search-input" type="text" id="searchInput" placeholder="Search branch name or area…" oninput="filterCards()"/>
-    <button class="btn btn-primary" onclick="filterCards()">Search</button>
-  </div>
-  <div class="stats-bar">
-    <div class="stat-chip">🟢 <strong id="quietCount">0</strong> quiet now</div>
-    <div class="stat-chip">🟡 <strong id="busyCount">0</strong> busy</div>
-    <div class="stat-chip">🔴 <strong id="vbusyCount">0</strong> very busy</div>
-    <div class="stat-chip">⚫ <strong id="offlineCount">0</strong> offline</div>
-  </div>
-</section>
-
-<!-- MAIN -->
-<main class="main">
-  <div class="section-header">
-    <span class="section-title">// Branches near you</span>
-    <div class="filter-tabs">
-      <button class="tab active" onclick="setFilter('all', this)">All</button>
-      <button class="tab" onclick="setFilter('Home Affairs', this)">Home Affairs</button>
-      <button class="tab" onclick="setFilter('SASSA', this)">SASSA</button>
-      <button class="tab" onclick="setFilter('Clinic', this)">Clinic</button>
-      <button class="tab" onclick="setFilter('Licensing', this)">Licensing</button>
-    </div>
-  </div>
-
-  <div class="branch-grid" id="branchGrid"></div>
-  <div class="empty-state" id="emptyState">
-    <div class="empty-icon">🔍</div>
-    <p>No branches match your search.</p>
-  </div>
-</main>
-
-<!-- TOAST -->
-<div class="toast" id="toast"></div>
-
-<!-- FAB -->
-<button class="fab" onclick="window.location='auth.html'">+ Report Queue</button>
-
-<script src="script.js"></script>
-<script>
-  // Make cards clickable — go to branch detail page
-  function renderCards(list) {
-    const grid  = document.getElementById('branchGrid');
-    const empty = document.getElementById('emptyState');
-    grid.innerHTML = '';
-    if (!list.length) { empty.classList.add('show'); return; }
-    empty.classList.remove('show');
-
-    list.forEach(b => {
-      const s  = statusMap[b.status] || statusMap["System Offline"];
-      const wl = waitLabel(b.wait);
-      const card = document.createElement('div');
-      card.className = 'branch-card';
-      card.style.setProperty('--status-color', s.cssVar);
-      card.style.cursor = 'pointer';
-      card.onclick = () => {
-        localStorage.setItem('selectedBranch', JSON.stringify(b));
-        window.location.href = 'branch.html';
-      };
-      card.innerHTML = `
-        <div class="card-top">
-          <div class="branch-name">${b.name}</div>
-          <div class="status-badge ${s.cls}">${b.status}</div>
+    <section class="hero">
+      <div class="hero-tag">🇿🇦 COMMUNITY-DRIVEN · REAL-TIME</div>
+      <h1>Skip the wait.<br /><span>Know before you go.</span></h1>
+      <p class="hero-sub">
+        Real-time queue updates for Home Affairs, SASSA, clinics, and licensing
+        offices — reported by people already there.
+      </p>
+      <div class="search-wrap">
+        <input
+          class="search-input"
+          type="text"
+          id="searchInput"
+          placeholder="Search branch name or area…"
+          oninput="filterCards()"
+        />
+        <button class="btn btn-primary" onclick="filterCards()">Search</button>
+      </div>
+      <div class="stats-bar">
+        <div class="stat-chip">
+          🟢 <strong id="quietCount">0</strong> quiet now
         </div>
-        <div class="branch-type">${b.type}</div>
-        <div class="wait-display">
-          <span class="wait-number">${wl.num}</span>
-          <span class="wait-unit">${wl.unit}</span>
+        <div class="stat-chip">🟡 <strong id="busyCount">0</strong> busy</div>
+        <div class="stat-chip">
+          🔴 <strong id="vbusyCount">0</strong> very busy
         </div>
-        <div class="card-footer">
-          <span class="last-update">Updated ${b.updated}</span>
-          <span class="report-count">${b.reports} report${b.reports !== 1 ? 's' : ''} today</span>
+        <div class="stat-chip">
+          ⚫ <strong id="offlineCount">0</strong> offline
         </div>
-      `;
-      grid.appendChild(card);
-    });
-  }
-  filterCards();
-</script>
-</body>
+      </div>
+    </section>
+
+    <main class="main">
+      <div class="section-header">
+        <span class="section-title">// Branches near you</span>
+        <div class="filter-tabs">
+          <button class="tab active" onclick="setFilter('all', this)">
+            All
+          </button>
+          <button class="tab" onclick="setFilter('Home Affairs', this)">
+            Home Affairs
+          </button>
+          <button class="tab" onclick="setFilter('SASSA', this)">SASSA</button>
+          <button class="tab" onclick="setFilter('Clinic', this)">
+            Clinic
+          </button>
+          <button class="tab" onclick="setFilter('Licensing', this)">
+            Licensing
+          </button>
+        </div>
+      </div>
+      <div class="branch-grid" id="branchGrid"></div>
+      <div class="empty-state" id="emptyState">
+        <div class="empty-icon">🔍</div>
+        <p>No branches match your search.</p>
+      </div>
+    </main>
+
+    <div class="toast" id="toast"></div>
+    <button class="fab" onclick="window.location = 'report.html'">
+      + Report Queue
+    </button>
+
+    <!-- ONLY script.js needed — renderCards with onclick is already inside it -->
+    <script src="script.js"></script>
+  </body>
 </html>

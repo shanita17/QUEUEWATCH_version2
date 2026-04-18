@@ -1,55 +1,120 @@
 // ─── SEED DATA ───
 const branches = [
-  { id:1, name:"Home Affairs Benoni",      type:"Home Affairs", status:"Very Busy",      wait:120, reports:7,  updated:"8 min ago"  },
-  { id:2, name:"SASSA Boksburg Office",    type:"SASSA",        status:"Busy",           wait:60,  reports:4,  updated:"22 min ago" },
-  { id:3, name:"Kempton Park Licensing",   type:"Licensing",    status:"Quiet",          wait:20,  reports:2,  updated:"5 min ago"  },
-  { id:4, name:"Germiston Clinic",         type:"Clinic",       status:"Very Busy",      wait:90,  reports:11, updated:"2 min ago"  },
-  { id:5, name:"Home Affairs Alberton",    type:"Home Affairs", status:"System Offline", wait:0,   reports:3,  updated:"1 hr ago"   },
-  { id:6, name:"SASSA Thembisa Office",    type:"SASSA",        status:"Busy",           wait:45,  reports:5,  updated:"14 min ago" },
-  { id:7, name:"Edenvale Licensing Dept",  type:"Licensing",    status:"Quiet",          wait:15,  reports:1,  updated:"31 min ago" },
-  { id:8, name:"Brakpan Community Clinic", type:"Clinic",       status:"Busy",           wait:75,  reports:6,  updated:"9 min ago"  },
+  {
+    id: 1,
+    name: "Home Affairs Benoni",
+    type: "Home Affairs",
+    status: "Very Busy",
+    wait: 120,
+    reports: 7,
+    updated: "8 min ago",
+  },
+  {
+    id: 2,
+    name: "SASSA Boksburg Office",
+    type: "SASSA",
+    status: "Busy",
+    wait: 60,
+    reports: 4,
+    updated: "22 min ago",
+  },
+  {
+    id: 3,
+    name: "Kempton Park Licensing",
+    type: "Licensing",
+    status: "Quiet",
+    wait: 20,
+    reports: 2,
+    updated: "5 min ago",
+  },
+  {
+    id: 4,
+    name: "Germiston Clinic",
+    type: "Clinic",
+    status: "Very Busy",
+    wait: 90,
+    reports: 11,
+    updated: "2 min ago",
+  },
+  {
+    id: 5,
+    name: "Home Affairs Alberton",
+    type: "Home Affairs",
+    status: "System Offline",
+    wait: 0,
+    reports: 3,
+    updated: "1 hr ago",
+  },
+  {
+    id: 6,
+    name: "SASSA Thembisa Office",
+    type: "SASSA",
+    status: "Busy",
+    wait: 45,
+    reports: 5,
+    updated: "14 min ago",
+  },
+  {
+    id: 7,
+    name: "Edenvale Licensing Dept",
+    type: "Licensing",
+    status: "Quiet",
+    wait: 15,
+    reports: 1,
+    updated: "31 min ago",
+  },
+  {
+    id: 8,
+    name: "Brakpan Community Clinic",
+    type: "Clinic",
+    status: "Busy",
+    wait: 75,
+    reports: 6,
+    updated: "9 min ago",
+  },
 ];
 
 const statusMap = {
-  "Quiet":          { cls: "status-quiet",   cssVar: "var(--quiet)"   },
-  "Busy":           { cls: "status-busy",    cssVar: "var(--busy)"    },
-  "Very Busy":      { cls: "status-vbusy",   cssVar: "var(--vbusy)"   },
+  Quiet: { cls: "status-quiet", cssVar: "var(--quiet)" },
+  Busy: { cls: "status-busy", cssVar: "var(--busy)" },
+  "Very Busy": { cls: "status-vbusy", cssVar: "var(--vbusy)" },
   "System Offline": { cls: "status-offline", cssVar: "var(--offline)" },
 };
 
-let activeFilter = 'all';
-let selectedStatus = '';
+let activeFilter = "all";
+let selectedStatus = "";
 
 // ─── HELPERS ───
 function waitLabel(w) {
-  if (w === 0) return { num: '—', unit: 'system down' };
-  if (w < 60)  return { num: w,   unit: 'min wait' };
-  const h = (w / 60).toFixed(1).replace('.0', '');
-  return { num: h, unit: h === '1' ? 'hr wait' : 'hrs wait' };
+  if (w === 0) return { num: "—", unit: "system down" };
+  if (w < 60) return { num: w, unit: "min wait" };
+  const h = (w / 60).toFixed(1).replace(".0", "");
+  return { num: h, unit: h === "1" ? "hr wait" : "hrs wait" };
 }
 
-// ─── RENDER ───
+// ─── RENDER CARDS (with onclick built in) ───
 function renderCards(list) {
-  const grid  = document.getElementById('branchGrid');
-  const empty = document.getElementById('emptyState');
-  grid.innerHTML = '';
+  const grid = document.getElementById("branchGrid");
+  const empty = document.getElementById("emptyState");
+  if (!grid) return; // safety: only run on pages that have branchGrid
+  grid.innerHTML = "";
 
   if (!list.length) {
-    empty.classList.add('show');
+    if (empty) empty.classList.add("show");
     return;
   }
-  empty.classList.remove('show');
+  if (empty) empty.classList.remove("show");
 
-  list.forEach(b => {
-    const s  = statusMap[b.status] || statusMap["System Offline"];
+  list.forEach((b) => {
+    const s = statusMap[b.status] || statusMap["System Offline"];
     const wl = waitLabel(b.wait);
-    const card = document.createElement('div');
-    card.className = 'branch-card';
-    card.style.setProperty('--status-color', s.cssVar);
-    card.style.cursor = 'pointer';
+    const card = document.createElement("div");
+    card.className = "branch-card";
+    card.style.setProperty("--status-color", s.cssVar);
+    card.style.cursor = "pointer";
     card.onclick = () => {
-      localStorage.setItem('selectedBranch', JSON.stringify(b));
-      window.location.href = 'branch.html';
+      localStorage.setItem("selectedBranch", JSON.stringify(b));
+      window.location.href = "branch.html";
     };
     card.innerHTML = `
       <div class="card-top">
@@ -63,7 +128,7 @@ function renderCards(list) {
       </div>
       <div class="card-footer">
         <span class="last-update">Updated ${b.updated}</span>
-        <span class="report-count">${b.reports} report${b.reports !== 1 ? 's' : ''} today</span>
+        <span class="report-count">${b.reports} report${b.reports !== 1 ? "s" : ""} today</span>
       </div>
     `;
     grid.appendChild(card);
@@ -71,17 +136,24 @@ function renderCards(list) {
 }
 
 function updateStats(list) {
-  document.getElementById('quietCount').textContent   = list.filter(b => b.status === 'Quiet').length;
-  document.getElementById('busyCount').textContent    = list.filter(b => b.status === 'Busy').length;
-  document.getElementById('vbusyCount').textContent   = list.filter(b => b.status === 'Very Busy').length;
-  document.getElementById('offlineCount').textContent = list.filter(b => b.status === 'System Offline').length;
+  const qc = document.getElementById("quietCount");
+  const bc = document.getElementById("busyCount");
+  const vc = document.getElementById("vbusyCount");
+  const oc = document.getElementById("offlineCount");
+  if (qc) qc.textContent = list.filter((b) => b.status === "Quiet").length;
+  if (bc) bc.textContent = list.filter((b) => b.status === "Busy").length;
+  if (vc) vc.textContent = list.filter((b) => b.status === "Very Busy").length;
+  if (oc)
+    oc.textContent = list.filter((b) => b.status === "System Offline").length;
 }
 
 function getFiltered() {
-  const q = document.getElementById('searchInput').value.toLowerCase();
-  return branches.filter(b =>
-    (activeFilter === 'all' || b.type === activeFilter) &&
-    (b.name.toLowerCase().includes(q) || b.type.toLowerCase().includes(q))
+  const searchEl = document.getElementById("searchInput");
+  const q = searchEl ? searchEl.value.toLowerCase() : "";
+  return branches.filter(
+    (b) =>
+      (activeFilter === "all" || b.type === activeFilter) &&
+      (b.name.toLowerCase().includes(q) || b.type.toLowerCase().includes(q)),
   );
 }
 
@@ -93,79 +165,41 @@ function filterCards() {
 
 function setFilter(type, el) {
   activeFilter = type;
-  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-  el.classList.add('active');
+  document
+    .querySelectorAll(".tab")
+    .forEach((t) => t.classList.remove("active"));
+  el.classList.add("active");
   filterCards();
-}
-
-// ─── MODALS ───
-function openReportModal() {
-  const sel = document.getElementById('reportBranch');
-  sel.innerHTML = branches.map(b => `<option value="${b.id}">${b.name}</option>`).join('');
-  document.getElementById('reportModal').classList.add('open');
-}
-
-function openAuth(tab) {
-  document.getElementById('authModal').classList.add('open');
-  switchAuthTab(tab);
-}
-
-function closeModal(id) {
-  document.getElementById(id).classList.remove('open');
-}
-
-function switchAuthTab(tab) {
-  document.getElementById('loginForm').style.display    = tab === 'login'    ? 'block' : 'none';
-  document.getElementById('registerForm').style.display = tab === 'register' ? 'block' : 'none';
-  document.getElementById('tabLogin').classList.toggle('active', tab === 'login');
-  document.getElementById('tabRegister').classList.toggle('active', tab === 'register');
-  document.getElementById('authTitle').textContent = tab === 'login' ? 'Welcome back' : 'Create an account';
 }
 
 // ─── STATUS PICKER ───
 function selectStatus(el) {
-  document.querySelectorAll('.status-opt').forEach(o => o.className = 'status-opt');
+  document
+    .querySelectorAll(".status-opt")
+    .forEach((o) => (o.className = "status-opt"));
   const v = el.dataset.val;
   selectedStatus = v;
-  const map = { 'Quiet': 'quiet', 'Busy': 'busy', 'Very Busy': 'vbusy', 'System Offline': 'offline' };
-  el.classList.add('selected-' + (map[v] || 'quiet'));
-}
-
-// ─── SUBMIT REPORT ───
-function submitReport() {
-  if (!selectedStatus) { showToast('⚠️ Please select a status.'); return; }
-
-  const branchId = parseInt(document.getElementById('reportBranch').value);
-  const wait     = parseInt(document.getElementById('reportWait').value);
-  const branch   = branches.find(b => b.id === branchId);
-
-  if (branch) {
-    branch.status  = selectedStatus;
-    branch.wait    = wait;
-    branch.reports += 1;
-    branch.updated = 'just now';
-  }
-
-  closeModal('reportModal');
-  selectedStatus = '';
-  document.querySelectorAll('.status-opt').forEach(o => o.className = 'status-opt');
-  filterCards();
-  showToast('✅ Report submitted — thanks!');
-}
-
-// ─── FAKE LOGIN ───
-function fakeLogin() {
-  closeModal('authModal');
-  showToast('👋 Logged in successfully!');
+  const map = {
+    Quiet: "quiet",
+    Busy: "busy",
+    "Very Busy": "vbusy",
+    "System Offline": "offline",
+  };
+  el.classList.add("selected-" + (map[v] || "quiet"));
 }
 
 // ─── TOAST ───
 function showToast(msg) {
-  const t = document.getElementById('toast');
-  t.textContent  = msg;
-  t.style.display = 'block';
-  setTimeout(() => { t.style.display = 'none'; }, 3000);
+  const t = document.getElementById("toast");
+  if (!t) return;
+  t.textContent = msg;
+  t.style.display = "block";
+  setTimeout(() => {
+    t.style.display = "none";
+  }, 3000);
 }
 
-// ─── INIT ───
-filterCards();
+// ─── INIT: only run filterCards on pages that have a branchGrid ───
+if (document.getElementById("branchGrid")) {
+  filterCards();
+}

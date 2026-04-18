@@ -1,132 +1,305 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Profile — QueueWatch SA</title>
-  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;800&display=swap" rel="stylesheet"/>
-  <link rel="stylesheet" href="style.css"/>
-</head>
-<body>
-<nav>
-  <div class="logo" onclick="window.location='index.html'" style="cursor:pointer">
-    <div class="logo-dot"></div>
-    QueueWatch<span style="color:var(--accent)">SA</span>
-  </div>
-  <ul class="nav-links">
-    <li><a href="index.html">Branches</a></li>
-    <li><a href="admin.html">Admin</a></li>
-    <li><a href="about.html">About</a></li>
-  </ul>
-  <div style="display:flex;gap:0.6rem">
-    <a href="profile.html" class="btn btn-outline" style="border-color:var(--accent);color:var(--accent)">My Profile</a>
-    <a href="index.html" class="btn btn-primary">Logout</a>
-  </div>
-</nav>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Profile — QueueWatch SA</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <nav>
+      <div
+        class="logo"
+        onclick="window.location = 'index.html'"
+        style="cursor: pointer"
+      >
+        <div class="logo-dot"></div>
+        QueueWatch<span style="color: var(--accent)">SA</span>
+      </div>
+      <ul class="nav-links">
+        <li><a href="index.html">Branches</a></li>
+        <li><a href="admin.html">Admin</a></li>
+        <li><a href="about.html">About</a></li>
+      </ul>
+      <div style="display: flex; gap: 0.6rem">
+        <a
+          href="profile.html"
+          class="btn btn-outline"
+          style="border-color: var(--accent); color: var(--accent)"
+          >My Profile</a
+        >
+        <a href="index.html" class="btn btn-primary">Logout</a>
+      </div>
+    </nav>
 
-<div class="main" style="padding-top:2rem">
-  <a href="index.html" class="back-link">← Back to branches</a>
+    <div class="main" style="padding-top: 2rem">
+      <a href="index.html" class="back-link">← Back to branches</a>
 
-  <!-- PROFILE HEADER -->
-  <div style="background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:2rem;margin-bottom:1.5rem;display:flex;align-items:center;gap:1.5rem;flex-wrap:wrap">
-    <div style="width:72px;height:72px;border-radius:50%;background:rgba(245,197,24,0.15);border:2px solid var(--accent);display:flex;align-items:center;justify-content:center;font-size:1.6rem;font-weight:800;color:var(--accent);flex-shrink:0">DS</div>
-    <div style="flex:1">
-      <h2 style="font-size:1.5rem;font-weight:800">DevSquad</h2>
-      <div style="color:var(--muted);font-family:'Space Mono',monospace;font-size:0.78rem;margin-top:0.3rem">contact@devsquad.co.za</div>
-      <div style="display:flex;gap:0.5rem;margin-top:0.6rem;flex-wrap:wrap">
-        <span style="background:rgba(245,197,24,0.1);border:1px solid rgba(245,197,24,0.3);color:var(--accent);font-size:0.7rem;font-family:'Space Mono',monospace;padding:0.2rem 0.6rem;border-radius:4px">MEMBER</span>
-        <span style="background:var(--surface2);border:1px solid var(--border);color:var(--muted);font-size:0.7rem;font-family:'Space Mono',monospace;padding:0.2rem 0.6rem;border-radius:4px">Joined Apr 2026</span>
+      <!-- PROFILE HEADER -->
+      <div
+        style="
+          background: var(--surface);
+          border: 1px solid var(--border);
+          border-radius: 16px;
+          padding: 2rem;
+          margin-bottom: 1.5rem;
+          display: flex;
+          align-items: center;
+          gap: 1.5rem;
+          flex-wrap: wrap;
+        "
+      >
+        <div
+          style="
+            width: 72px;
+            height: 72px;
+            border-radius: 50%;
+            background: rgba(245, 197, 24, 0.15);
+            border: 2px solid var(--accent);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.6rem;
+            font-weight: 800;
+            color: var(--accent);
+            flex-shrink: 0;
+          "
+        >
+          DS
+        </div>
+        <div style="flex: 1">
+          <h2 style="font-size: 1.5rem; font-weight: 800">DevSquad</h2>
+          <div
+            style="
+              color: var(--muted);
+              font-family: &quot;Space Mono&quot;, monospace;
+              font-size: 0.78rem;
+              margin-top: 0.3rem;
+            "
+          >
+            contact@devsquad.co.za
+          </div>
+          <div
+            style="
+              display: flex;
+              gap: 0.5rem;
+              margin-top: 0.6rem;
+              flex-wrap: wrap;
+            "
+          >
+            <span
+              style="
+                background: rgba(245, 197, 24, 0.1);
+                border: 1px solid rgba(245, 197, 24, 0.3);
+                color: var(--accent);
+                font-size: 0.7rem;
+                font-family: &quot;Space Mono&quot;, monospace;
+                padding: 0.2rem 0.6rem;
+                border-radius: 4px;
+              "
+              >MEMBER</span
+            >
+            <span
+              style="
+                background: var(--surface2);
+                border: 1px solid var(--border);
+                color: var(--muted);
+                font-size: 0.7rem;
+                font-family: &quot;Space Mono&quot;, monospace;
+                padding: 0.2rem 0.6rem;
+                border-radius: 4px;
+              "
+              >Joined Apr 2026</span
+            >
+          </div>
+        </div>
+        <a href="report.html" class="btn btn-primary">+ Submit Report</a>
+      </div>
+
+      <!-- STATS -->
+      <div class="admin-stats" style="margin-bottom: 1.5rem">
+        <div class="admin-stat-card">
+          <div class="admin-stat-num">12</div>
+          <div class="admin-stat-label">Reports Submitted</div>
+        </div>
+        <div class="admin-stat-card">
+          <div class="admin-stat-num" style="color: var(--quiet)">94%</div>
+          <div class="admin-stat-label">Accuracy Rate</div>
+        </div>
+        <div class="admin-stat-card">
+          <div class="admin-stat-num">3</div>
+          <div class="admin-stat-label">Branches Covered</div>
+        </div>
+      </div>
+
+      <div class="detail-grid">
+        <!-- MY REPORTS -->
+        <div>
+          <div class="section-title" style="margin-bottom: 1rem">
+            // My Recent Reports
+          </div>
+          <div class="report-item">
+            <div class="report-item-top">
+              <div>
+                <span class="report-user">Home Affairs Benoni</span
+                ><span class="report-time">09:14 today</span>
+              </div>
+              <div class="status-badge status-vbusy" style="font-size: 0.65rem">
+                Very Busy
+              </div>
+            </div>
+            <div
+              style="
+                display: flex;
+                align-items: baseline;
+                gap: 0.3rem;
+                margin: 0.5rem 0;
+              "
+            >
+              <span
+                style="font-size: 1.4rem; font-weight: 800; color: var(--vbusy)"
+                >2</span
+              >
+              <span
+                style="
+                  font-size: 0.75rem;
+                  color: var(--muted);
+                  font-family: &quot;Space Mono&quot;, monospace;
+                "
+                >hrs wait</span
+              >
+            </div>
+            <div class="report-note">"Queue outside the building"</div>
+          </div>
+          <div class="report-item">
+            <div class="report-item-top">
+              <div>
+                <span class="report-user">SASSA Boksburg</span
+                ><span class="report-time">Yesterday 14:30</span>
+              </div>
+              <div class="status-badge status-busy" style="font-size: 0.65rem">
+                Busy
+              </div>
+            </div>
+            <div
+              style="
+                display: flex;
+                align-items: baseline;
+                gap: 0.3rem;
+                margin: 0.5rem 0;
+              "
+            >
+              <span
+                style="font-size: 1.4rem; font-weight: 800; color: var(--busy)"
+                >45</span
+              >
+              <span
+                style="
+                  font-size: 0.75rem;
+                  color: var(--muted);
+                  font-family: &quot;Space Mono&quot;, monospace;
+                "
+                >min wait</span
+              >
+            </div>
+            <div class="report-note">"Moving fairly quickly"</div>
+          </div>
+          <div class="report-item">
+            <div class="report-item-top">
+              <div>
+                <span class="report-user">Edenvale Licensing</span
+                ><span class="report-time">Mon 08:00</span>
+              </div>
+              <div class="status-badge status-quiet" style="font-size: 0.65rem">
+                Quiet
+              </div>
+            </div>
+            <div
+              style="
+                display: flex;
+                align-items: baseline;
+                gap: 0.3rem;
+                margin: 0.5rem 0;
+              "
+            >
+              <span
+                style="font-size: 1.4rem; font-weight: 800; color: var(--quiet)"
+                >10</span
+              >
+              <span
+                style="
+                  font-size: 0.75rem;
+                  color: var(--muted);
+                  font-family: &quot;Space Mono&quot;, monospace;
+                "
+                >min wait</span
+              >
+            </div>
+            <div class="report-note">
+              "Very quiet first thing in the morning"
+            </div>
+          </div>
+        </div>
+
+        <!-- SETTINGS -->
+        <div>
+          <div class="section-title" style="margin-bottom: 1rem">
+            // Account Settings
+          </div>
+          <div
+            style="
+              background: var(--surface);
+              border: 1px solid var(--border);
+              border-radius: 12px;
+              overflow: hidden;
+            "
+          >
+            <div class="form-group" style="padding: 1.2rem 1.2rem 0">
+              <label class="form-label">Full Name</label>
+              <input class="form-control" type="text" value="DevSquad" />
+            </div>
+            <div class="form-group" style="padding: 0 1.2rem">
+              <label class="form-label">Email</label>
+              <input
+                class="form-control"
+                type="email"
+                value="contact@devsquad.co.za"
+              />
+            </div>
+            <div class="form-group" style="padding: 0 1.2rem">
+              <label class="form-label">New Password</label>
+              <input
+                class="form-control"
+                type="password"
+                placeholder="Leave blank to keep current"
+              />
+            </div>
+            <div style="padding: 0 1.2rem 1.2rem">
+              <button
+                class="btn btn-primary"
+                style="width: 100%"
+                onclick="showToast('✅ Profile updated!')"
+              >
+                Save Changes
+              </button>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
-    <a href="report.html" class="btn btn-primary">+ Submit Report</a>
-  </div>
 
-  <!-- STATS -->
-  <div class="admin-stats" style="margin-bottom:1.5rem">
-    <div class="admin-stat-card">
-      <div class="admin-stat-num">12</div>
-      <div class="admin-stat-label">Reports Submitted</div>
-    </div>
-    <div class="admin-stat-card">
-      <div class="admin-stat-num" style="color:var(--quiet)">94%</div>
-      <div class="admin-stat-label">Accuracy Rate</div>
-    </div>
-    <div class="admin-stat-card">
-      <div class="admin-stat-num">3</div>
-      <div class="admin-stat-label">Branches Covered</div>
-    </div>
-  </div>
-
-  <div class="detail-grid">
-    <!-- MY REPORTS -->
-    <div>
-      <div class="section-title" style="margin-bottom:1rem">// My Recent Reports</div>
-      <div class="report-item">
-        <div class="report-item-top">
-          <div><span class="report-user">Home Affairs Benoni</span><span class="report-time">09:14 today</span></div>
-          <div class="status-badge status-vbusy" style="font-size:0.65rem">Very Busy</div>
-        </div>
-        <div style="display:flex;align-items:baseline;gap:0.3rem;margin:0.5rem 0">
-          <span style="font-size:1.4rem;font-weight:800;color:var(--vbusy)">2</span>
-          <span style="font-size:0.75rem;color:var(--muted);font-family:'Space Mono',monospace">hrs wait</span>
-        </div>
-        <div class="report-note">"Queue outside the building"</div>
-      </div>
-      <div class="report-item">
-        <div class="report-item-top">
-          <div><span class="report-user">SASSA Boksburg</span><span class="report-time">Yesterday 14:30</span></div>
-          <div class="status-badge status-busy" style="font-size:0.65rem">Busy</div>
-        </div>
-        <div style="display:flex;align-items:baseline;gap:0.3rem;margin:0.5rem 0">
-          <span style="font-size:1.4rem;font-weight:800;color:var(--busy)">45</span>
-          <span style="font-size:0.75rem;color:var(--muted);font-family:'Space Mono',monospace">min wait</span>
-        </div>
-        <div class="report-note">"Moving fairly quickly"</div>
-      </div>
-      <div class="report-item">
-        <div class="report-item-top">
-          <div><span class="report-user">Edenvale Licensing</span><span class="report-time">Mon 08:00</span></div>
-          <div class="status-badge status-quiet" style="font-size:0.65rem">Quiet</div>
-        </div>
-        <div style="display:flex;align-items:baseline;gap:0.3rem;margin:0.5rem 0">
-          <span style="font-size:1.4rem;font-weight:800;color:var(--quiet)">10</span>
-          <span style="font-size:0.75rem;color:var(--muted);font-family:'Space Mono',monospace">min wait</span>
-        </div>
-        <div class="report-note">"Very quiet first thing in the morning"</div>
-      </div>
-    </div>
-
-    <!-- SETTINGS -->
-    <div>
-      <div class="section-title" style="margin-bottom:1rem">// Account Settings</div>
-      <div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;overflow:hidden">
-        <div class="form-group" style="padding:1.2rem 1.2rem 0">
-          <label class="form-label">Full Name</label>
-          <input class="form-control" type="text" value="DevSquad"/>
-        </div>
-        <div class="form-group" style="padding:0 1.2rem">
-          <label class="form-label">Email</label>
-          <input class="form-control" type="email" value="contact@devsquad.co.za"/>
-        </div>
-        <div class="form-group" style="padding:0 1.2rem">
-          <label class="form-label">New Password</label>
-          <input class="form-control" type="password" placeholder="Leave blank to keep current"/>
-        </div>
-        <div style="padding:0 1.2rem 1.2rem">
-          <button class="btn btn-primary" style="width:100%" onclick="showToast('✅ Profile updated!')">Save Changes</button>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<div class="toast" id="toast"></div>
-<script>
-  function showToast(msg) {
-    const t = document.getElementById('toast');
-    t.textContent = msg; t.style.display = 'block';
-    setTimeout(() => t.style.display = 'none', 3000);
-  }
-</script>
-</body>
+    <div class="toast" id="toast"></div>
+    <script>
+      function showToast(msg) {
+        const t = document.getElementById("toast");
+        t.textContent = msg;
+        t.style.display = "block";
+        setTimeout(() => (t.style.display = "none"), 3000);
+      }
+    </script>
+  </body>
 </html>

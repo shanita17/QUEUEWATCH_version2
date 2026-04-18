@@ -1,109 +1,195 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Login / Register — QueueWatch SA</title>
-  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;800&display=swap" rel="stylesheet"/>
-  <link rel="stylesheet" href="style.css"/>
-</head>
-<body>
-
-<!-- NAV -->
-<nav>
-  <div class="logo" onclick="window.location='index.html'" style="cursor:pointer">
-    <div class="logo-dot"></div>
-    QueueWatch<span style="color:var(--accent)">SA</span>
-  </div>
-  <ul class="nav-links">
-    <li><a href="branches.html">Branches</a></li>
-    <li><a href="admin.html">Admin</a></li>
-    <li><a href="about.html">About</a></li><li><a href="contact.html">Contact</a></li>
-  </ul>
-</nav>
-
-<div class="auth-page">
-  <div class="auth-card">
-
-    <!-- LOGO -->
-    <div style="text-align:center;margin-bottom:2rem">
-      <div style="display:flex;align-items:center;justify-content:center;gap:0.5rem;font-size:1.4rem;font-weight:800">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Login / Register — QueueWatch SA</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <nav>
+      <div
+        class="logo"
+        onclick="window.location = 'index.html'"
+        style="cursor: pointer"
+      >
         <div class="logo-dot"></div>
-        QueueWatch<span style="color:var(--accent)">SA</span>
+        QueueWatch<span style="color: var(--accent)">SA</span>
       </div>
-      <p style="color:var(--muted);font-size:0.85rem;margin-top:0.4rem">Community queue reporting</p>
+      <ul class="nav-links">
+        <li><a href="branches.html">Branches</a></li>
+        <li><a href="admin.html">Admin</a></li>
+        <li><a href="about.html">About</a></li>
+        <li><a href="contact.html">Contact</a></li>
+      </ul>
+    </nav>
+
+    <div class="auth-page">
+      <div class="auth-card">
+        <div style="text-align: center; margin-bottom: 2rem">
+          <div
+            style="
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              gap: 0.5rem;
+              font-size: 1.4rem;
+              font-weight: 800;
+            "
+          >
+            <div class="logo-dot"></div>
+            QueueWatch<span style="color: var(--accent)">SA</span>
+          </div>
+          <p
+            style="color: var(--muted); font-size: 0.85rem; margin-top: 0.4rem"
+          >
+            Community queue reporting
+          </p>
+        </div>
+
+        <div class="auth-tabs">
+          <div
+            class="auth-tab active"
+            id="tabLogin"
+            onclick="switchTab('login')"
+          >
+            Login
+          </div>
+          <div
+            class="auth-tab"
+            id="tabRegister"
+            onclick="switchTab('register')"
+          >
+            Register
+          </div>
+        </div>
+
+        <div id="loginForm">
+          <div class="form-group">
+            <label class="form-label">Email Address</label>
+            <input
+              class="form-control"
+              type="email"
+              placeholder="you@example.com"
+            />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Password</label>
+            <input
+              class="form-control"
+              type="password"
+              placeholder="••••••••"
+            />
+          </div>
+          <button
+            class="btn btn-primary"
+            style="width: 100%; margin-top: 0.5rem; padding: 0.8rem"
+            onclick="handleLogin()"
+          >
+            Login to QueueWatch
+          </button>
+          <p
+            style="
+              text-align: center;
+              margin-top: 1rem;
+              font-size: 0.82rem;
+              color: var(--muted);
+            "
+          >
+            Don't have an account?
+            <a
+              onclick="switchTab('register')"
+              style="color: var(--accent); cursor: pointer"
+              >Register here</a
+            >
+          </p>
+        </div>
+
+        <div id="registerForm" style="display: none">
+          <div class="form-group">
+            <label class="form-label">Full Name</label>
+            <input
+              class="form-control"
+              type="text"
+              placeholder="Jane Dlamini"
+            />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Email Address</label>
+            <input
+              class="form-control"
+              type="email"
+              placeholder="you@example.com"
+            />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Password</label>
+            <input
+              class="form-control"
+              type="password"
+              placeholder="Min. 8 characters"
+            />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Confirm Password</label>
+            <input
+              class="form-control"
+              type="password"
+              placeholder="••••••••"
+            />
+          </div>
+          <button
+            class="btn btn-primary"
+            style="width: 100%; margin-top: 0.5rem; padding: 0.8rem"
+            onclick="handleLogin()"
+          >
+            Create Account
+          </button>
+          <p
+            style="
+              text-align: center;
+              margin-top: 1rem;
+              font-size: 0.82rem;
+              color: var(--muted);
+            "
+          >
+            Already have an account?
+            <a
+              onclick="switchTab('login')"
+              style="color: var(--accent); cursor: pointer"
+              >Login here</a
+            >
+          </p>
+        </div>
+      </div>
     </div>
 
-    <!-- TABS -->
-    <div class="auth-tabs">
-      <div class="auth-tab active" id="tabLogin"    onclick="switchTab('login')">Login</div>
-      <div class="auth-tab"        id="tabRegister" onclick="switchTab('register')">Register</div>
-    </div>
-
-    <!-- LOGIN FORM -->
-    <div id="loginForm">
-      <div class="form-group">
-        <label class="form-label">Email Address</label>
-        <input class="form-control" type="email" placeholder="you@example.com"/>
-      </div>
-      <div class="form-group">
-        <label class="form-label">Password</label>
-        <input class="form-control" type="password" placeholder="••••••••"/>
-      </div>
-      <button class="btn btn-primary" style="width:100%;margin-top:0.5rem;padding:0.8rem" onclick="handleLogin()">
-        Login to QueueWatch
-      </button>
-      <p style="text-align:center;margin-top:1rem;font-size:0.82rem;color:var(--muted)">
-        Don't have an account? <a onclick="switchTab('register')" style="color:var(--accent);cursor:pointer">Register here</a>
-      </p>
-    </div>
-
-    <!-- REGISTER FORM -->
-    <div id="registerForm" style="display:none">
-      <div class="form-group">
-        <label class="form-label">Full Name</label>
-        <input class="form-control" type="text" placeholder="Jane Dlamini"/>
-      </div>
-      <div class="form-group">
-        <label class="form-label">Email Address</label>
-        <input class="form-control" type="email" placeholder="you@example.com"/>
-      </div>
-      <div class="form-group">
-        <label class="form-label">Password</label>
-        <input class="form-control" type="password" placeholder="Min. 8 characters"/>
-      </div>
-      <div class="form-group">
-        <label class="form-label">Confirm Password</label>
-        <input class="form-control" type="password" placeholder="••••••••"/>
-      </div>
-      <button class="btn btn-primary" style="width:100%;margin-top:0.5rem;padding:0.8rem" onclick="handleLogin()">
-        Create Account
-      </button>
-      <p style="text-align:center;margin-top:1rem;font-size:0.82rem;color:var(--muted)">
-        Already have an account? <a onclick="switchTab('login')" style="color:var(--accent);cursor:pointer">Login here</a>
-      </p>
-    </div>
-
-  </div>
-</div>
-
-<!-- TOAST -->
-<div class="toast" id="toast"></div>
-
-<script>
-  function switchTab(tab) {
-    document.getElementById('loginForm').style.display    = tab === 'login'    ? 'block' : 'none';
-    document.getElementById('registerForm').style.display = tab === 'register' ? 'block' : 'none';
-    document.getElementById('tabLogin').classList.toggle('active', tab === 'login');
-    document.getElementById('tabRegister').classList.toggle('active', tab === 'register');
-  }
-
-  function handleLogin() {
-    const t = document.getElementById('toast');
-    t.textContent   = '👋 Logged in! Redirecting...';
-    t.style.display = 'block';
-    setTimeout(() => { window.location.href = 'index.html'; }, 1500);
-  }
-</script>
-</body>
+    <div class="toast" id="toast"></div>
+    <script>
+      function switchTab(tab) {
+        document.getElementById("loginForm").style.display =
+          tab === "login" ? "block" : "none";
+        document.getElementById("registerForm").style.display =
+          tab === "register" ? "block" : "none";
+        document
+          .getElementById("tabLogin")
+          .classList.toggle("active", tab === "login");
+        document
+          .getElementById("tabRegister")
+          .classList.toggle("active", tab === "register");
+      }
+      function handleLogin() {
+        const t = document.getElementById("toast");
+        t.textContent = "👋 Logged in! Redirecting...";
+        t.style.display = "block";
+        setTimeout(() => {
+          window.location.href = "index.html";
+        }, 1500);
+      }
+    </script>
+  </body>
 </html>

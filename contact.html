@@ -1,96 +1,167 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Contact — QueueWatch SA</title>
-  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;800&display=swap" rel="stylesheet"/>
-  <link rel="stylesheet" href="style.css"/>
-</head>
-<body>
-<nav>
-  <div class="logo" onclick="window.location='index.html'" style="cursor:pointer">
-    <div class="logo-dot"></div>
-    QueueWatch<span style="color:var(--accent)">SA</span>
-  </div>
-  <ul class="nav-links">
-    <li><a href="index.html">Branches</a></li>
-    <li><a href="admin.html">Admin</a></li>
-    <li><a href="about.html">About</a></li>
-  </ul>
-  <div style="display:flex;gap:0.6rem">
-    <a href="auth.html" class="btn btn-outline">Login</a>
-    <a href="auth.html" class="btn btn-primary">Register</a>
-  </div>
-</nav>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Contact — QueueWatch SA</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <nav>
+      <div
+        class="logo"
+        onclick="window.location = 'index.html'"
+        style="cursor: pointer"
+      >
+        <div class="logo-dot"></div>
+        QueueWatch<span style="color: var(--accent)">SA</span>
+      </div>
+      <ul class="nav-links">
+        <li><a href="index.html">Branches</a></li>
+        <li><a href="admin.html">Admin</a></li>
+        <li><a href="about.html">About</a></li>
+      </ul>
+      <div style="display: flex; gap: 0.6rem">
+        <a href="auth.html" class="btn btn-outline">Login</a>
+        <a href="auth.html" class="btn btn-primary">Register</a>
+      </div>
+    </nav>
 
-<section class="hero" style="padding-bottom:2rem">
-  <div class="hero-tag">📬 GET IN TOUCH</div>
-  <h1>Contact <span>Us</span></h1>
-  <p class="hero-sub">Have a question, want to report a bug, or suggest a new branch? We'd love to hear from you.</p>
-</section>
+    <section class="hero" style="padding-bottom: 2rem">
+      <div class="hero-tag">📬 GET IN TOUCH</div>
+      <h1>Contact <span>Us</span></h1>
+      <p class="hero-sub">
+        Have a question, want to report a bug, or suggest a new branch? We'd
+        love to hear from you.
+      </p>
+    </section>
 
-<div class="main">
-  <div class="detail-grid">
+    <div class="main">
+      <div class="detail-grid">
+        <!-- FORM -->
+        <div
+          style="
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 2rem;
+          "
+        >
+          <div class="section-title" style="margin-bottom: 1.5rem">
+            // Send us a message
+          </div>
+          <div class="form-group">
+            <label class="form-label">Your Name</label>
+            <input
+              class="form-control"
+              type="text"
+              placeholder="Jane Dlamini"
+            />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Email Address</label>
+            <input
+              class="form-control"
+              type="email"
+              placeholder="you@example.com"
+            />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Subject</label>
+            <select class="form-select">
+              <option>General Enquiry</option>
+              <option>Report a Bug</option>
+              <option>Suggest a Branch</option>
+              <option>Partnership / Collaboration</option>
+              <option>Other</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Message</label>
+            <textarea
+              class="form-control"
+              rows="5"
+              placeholder="Tell us what's on your mind…"
+              style="resize: vertical"
+            ></textarea>
+          </div>
+          <button
+            class="btn btn-primary"
+            style="width: 100%; padding: 0.9rem"
+            onclick="sendMsg()"
+          >
+            Send Message
+          </button>
+        </div>
 
-    <!-- FORM -->
-    <div style="background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:2rem">
-      <div class="section-title" style="margin-bottom:1.5rem">// Send us a message</div>
-      <div class="form-group">
-        <label class="form-label">Your Name</label>
-        <input class="form-control" type="text" placeholder="Jane Dlamini"/>
+        <!-- INFO -->
+        <div>
+          <div class="section-title" style="margin-bottom: 1rem">
+            // Project Info
+          </div>
+          <div class="summary-card" style="margin-bottom: 1.5rem">
+            <div class="summary-row">
+              <span>Project</span><strong>QueueWatch SA</strong>
+            </div>
+            <div class="summary-row">
+              <span>Team</span><strong>Dev Squad</strong>
+            </div>
+            <div class="summary-row">
+              <span>Module</span><strong>DSW02A1</strong>
+            </div>
+            <div class="summary-row">
+              <span>Institution</span><strong>UJ</strong>
+            </div>
+            <div class="summary-row">
+              <span>Year</span><strong>2026</strong>
+            </div>
+          </div>
+
+          <div class="section-title" style="margin-bottom: 1rem">
+            // Quick Links
+          </div>
+          <div style="display: flex; flex-direction: column; gap: 0.6rem">
+            <a
+              href="about.html"
+              class="btn btn-outline"
+              style="text-decoration: none; text-align: center"
+              >About the Project</a
+            >
+            <a
+              href="branches.html"
+              class="btn btn-outline"
+              style="text-decoration: none; text-align: center"
+              >Browse Branches</a
+            >
+            <a
+              href="report.html"
+              class="btn btn-outline"
+              style="text-decoration: none; text-align: center"
+              >Submit a Report</a
+            >
+            <a
+              href="auth.html"
+              class="btn btn-primary"
+              style="text-decoration: none; text-align: center"
+              >Join QueueWatch</a
+            >
+          </div>
+        </div>
       </div>
-      <div class="form-group">
-        <label class="form-label">Email Address</label>
-        <input class="form-control" type="email" placeholder="you@example.com"/>
-      </div>
-      <div class="form-group">
-        <label class="form-label">Subject</label>
-        <select class="form-select">
-          <option>General Enquiry</option>
-          <option>Report a Bug</option>
-          <option>Suggest a Branch</option>
-          <option>Partnership / Collaboration</option>
-          <option>Other</option>
-        </select>
-      </div>
-      <div class="form-group">
-        <label class="form-label">Message</label>
-        <textarea class="form-control" rows="5" placeholder="Tell us what's on your mind…" style="resize:vertical"></textarea>
-      </div>
-      <button class="btn btn-primary" style="width:100%;padding:0.9rem" onclick="sendMsg()">Send Message</button>
     </div>
 
-    <!-- INFO -->
-    <div>
-      <div class="section-title" style="margin-bottom:1rem">// Project Info</div>
-      <div class="summary-card" style="margin-bottom:1.5rem">
-        <div class="summary-row"><span>Project</span><strong>QueueWatch SA</strong></div>
-        <div class="summary-row"><span>Team</span><strong>Dev Squad</strong></div>
-        <div class="summary-row"><span>Module</span><strong>DSW02A1</strong></div>
-        <div class="summary-row"><span>Institution</span><strong>UJ</strong></div>
-        <div class="summary-row"><span>Year</span><strong>2026</strong></div>
-      </div>
-
-      <div class="section-title" style="margin-bottom:1rem">// Quick Links</div>
-      <div style="display:flex;flex-direction:column;gap:0.6rem">
-        <a href="about.html"    class="btn btn-outline" style="text-decoration:none;text-align:center">About the Project</a>
-        <a href="branches.html" class="btn btn-outline" style="text-decoration:none;text-align:center">Browse Branches</a>
-        <a href="report.html"   class="btn btn-outline" style="text-decoration:none;text-align:center">Submit a Report</a>
-        <a href="auth.html"     class="btn btn-primary" style="text-decoration:none;text-align:center">Join QueueWatch</a>
-      </div>
-    </div>
-  </div>
-</div>
-
-<div class="toast" id="toast"></div>
-<script>
-  function sendMsg() {
-    const t = document.getElementById('toast');
-    t.textContent = '✅ Message sent — we\'ll be in touch!';
-    t.style.display = 'block';
-    setTimeout(() => t.style.display = 'none', 3000);
-  }
-</script>
-</body>
+    <div class="toast" id="toast"></div>
+    <script>
+      function sendMsg() {
+        const t = document.getElementById("toast");
+        t.textContent = "✅ Message sent — we'll be in touch!";
+        t.style.display = "block";
+        setTimeout(() => (t.style.display = "none"), 3000);
+      }
+    </script>
+  </body>
 </html>
