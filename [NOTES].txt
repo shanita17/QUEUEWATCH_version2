@@ -1,0 +1,217 @@
+================================================================
+QUEUEWATCH SA — FILE NOTES
+Project: DSW02A1 Group Project
+Team: Dev Squad
+================================================================
+
+----------------------------------------------------------------
+1. index.html — Home Page
+----------------------------------------------------------------
+This is the main landing page and the first page users see when
+they open the website. It displays a hero section with the
+project tagline, a search bar to find branches, and a live
+stats bar showing how many branches are quiet, busy, very busy,
+or offline. Below that it shows all branch cards in a grid
+layout with filter tabs (All, Home Affairs, SASSA, Clinic,
+Licensing). Clicking any branch card saves that branch to the
+browser's localStorage and navigates to branch.html to show
+its details. This page loads script.js to handle all the card
+rendering and filtering logic.
+
+----------------------------------------------------------------
+2. branches.html — All Branches Page
+----------------------------------------------------------------
+A dedicated page for browsing all branches with more advanced
+filtering options. Unlike the home page, this page has three
+filters: a text search, a dropdown to filter by branch type
+(Home Affairs, SASSA, Clinic, Licensing), and a dropdown to
+filter by current status (Quiet, Busy, Very Busy, System
+Offline). It also loads script.js for shared data and the
+renderCards function, then runs its own filterAll() function
+to apply the extra filters. Clicking a card works the same
+way as on the home page — saves the branch and goes to
+branch.html.
+
+----------------------------------------------------------------
+3. branch.html — Branch Detail Page
+----------------------------------------------------------------
+This page shows the full details of a specific branch after a
+user clicks on a branch card. It reads the selected branch
+from localStorage (saved when the card was clicked) and
+displays the branch name, type, current status badge, and
+average wait time. On the left it shows a list of recent
+reports submitted by community members, including who reported,
+what time, how long the wait was, and any notes they left. On
+the right it shows a placeholder where Google Maps will load
+(requires an API key to be set up in the backend phase), and
+a summary panel with total reports, peak time, average wait,
+and last update time. The "+ Add Report" button links to
+report.html.
+
+----------------------------------------------------------------
+4. auth.html — Login / Register Page
+----------------------------------------------------------------
+This is the authentication page where users can either log in
+to an existing account or register a new one. It uses two
+tabs — Login and Register — that switch between two forms on
+the same page without reloading. The Login form asks for an
+email and password. The Register form asks for full name,
+email, password, and password confirmation. Currently the
+login button shows a toast notification and redirects to the
+home page as a prototype. In the final version this will
+connect to the backend (Node.js / PHP) and the MySQL database
+to properly authenticate users and create sessions.
+
+----------------------------------------------------------------
+5. report.html — Submit a Queue Report Page
+----------------------------------------------------------------
+This is the page where a logged-in user who is physically at
+a branch can submit a queue report to help other users. The
+form asks the user to select which branch they are at from a
+dropdown list, choose the current status (Quiet, Busy, Very
+Busy, or System Offline) using clickable option buttons, pick
+an estimated wait time, and optionally add a short note
+describing what they see. When submitted, a toast confirmation
+appears and the user is redirected back to the home page. In
+the final version this will write the report to the MySQL
+database via the backend API.
+
+----------------------------------------------------------------
+6. admin.html — Admin Dashboard Page
+----------------------------------------------------------------
+This page is for the system administrator to monitor and
+moderate all user-submitted queue reports. It shows four
+summary stat cards at the top: total reports today, number of
+flagged reports, active branches, and registered users. Below
+that is a full table of all reports submitted today showing
+the user, branch, status, wait time, time of submission, and
+a Remove button. Reports that have been flagged as suspicious
+are highlighted in red with a "flagged" tag. Clicking Remove
+fades out and deletes the row from the table. In the final
+version this will connect to the database to actually delete
+records and will require admin authentication to access.
+
+----------------------------------------------------------------
+7. profile.html — User Profile Page
+----------------------------------------------------------------
+This page shows a logged-in user's personal profile and
+account settings. At the top is a profile header with the
+user's avatar initials, name, email, membership badge, and
+join date. Below that are three stat cards showing how many
+reports the user has submitted, their accuracy rate, and how
+many different branches they have covered. The left column
+shows the user's three most recent reports with branch name,
+time, status, wait time, and their note. The right column has
+an account settings form where the user can update their name,
+email, and password. The Save Changes button shows a toast
+confirmation.
+
+----------------------------------------------------------------
+8. about.html — About Page
+----------------------------------------------------------------
+This page explains the purpose and background of the
+QueueWatch SA project. It has a hero section with the mission
+statement, then two sections explaining the problem (long
+unpredictable queues at public service offices in South Africa)
+and the solution (a community-driven reporting platform). Below
+that is a "How It Works" section with four step cards walking
+through the user journey: search, check, report, plan. There
+is also a team section showing the Dev Squad, and a call to
+action at the bottom encouraging users to create an account
+or browse branches.
+
+----------------------------------------------------------------
+9. contact.html — Contact Page
+----------------------------------------------------------------
+This page provides a way for users to get in touch with the
+Dev Squad. On the left is a contact form with fields for the
+user's name, email, a subject dropdown (General Enquiry,
+Report a Bug, Suggest a Branch, Partnership, Other), and a
+message text area. Clicking Send Message shows a toast
+confirmation. On the right is a project info card showing the
+project name, team, module code, institution, and year, as
+well as quick links to the About, Branches, Report, and
+Register pages.
+
+----------------------------------------------------------------
+10. 404.html — Page Not Found
+----------------------------------------------------------------
+This is the error page that appears when a user navigates to
+a URL that does not exist on the site. It displays a large
+"404" number, a short humorous message ("Looks like this page
+joined the queue and never came back"), and two buttons to
+either go back to the home page or browse branches. It uses
+the same nav and styling as the rest of the site so it looks
+consistent.
+
+================================================================
+SHARED FILES
+================================================================
+
+----------------------------------------------------------------
+11. script.js — Shared JavaScript File
+----------------------------------------------------------------
+This is the most important JavaScript file in the project. It
+is loaded by index.html and branches.html and also by
+branch.html for access to shared functions. It contains the
+branch seed data (8 branches with name, type, status, wait
+time, report count, and last updated time), the statusMap
+object that maps status names to CSS classes and colour
+variables, and all the core functions used across the site.
+
+Key functions:
+- waitLabel(w): converts a wait time in minutes into a
+  human-readable label like "2 hrs wait" or "45 min wait"
+- renderCards(list): builds and displays branch cards in the
+  branchGrid element, with onclick handlers that save the
+  branch to localStorage and navigate to branch.html
+- updateStats(list): updates the stat chips on the home page
+  showing counts of quiet, busy, very busy, and offline branches
+- getFiltered(): reads the search input and activeFilter to
+  return the matching list of branches
+- filterCards(): calls getFiltered and then renderCards and
+  updateStats
+- setFilter(type, el): updates the active tab filter and
+  re-renders cards
+- showToast(msg): displays a small notification at the bottom
+  of the screen for 3 seconds
+- The file also has a safety guard at the bottom that only
+  calls filterCards() on pages that actually have a branchGrid
+  element, preventing crashes on pages like branch.html that
+  do not have that element
+
+----------------------------------------------------------------
+12. style.css — Shared Stylesheet
+----------------------------------------------------------------
+This is the single CSS file used by all 10 pages. It defines
+all the visual styling for the entire website so every page
+looks consistent without repeating code. It uses CSS custom
+properties (variables) defined in the :root selector to manage
+the colour scheme — dark background, surface cards, yellow
+accent colour, and status colours for green (quiet), amber
+(busy), red (very busy), and grey (offline).
+
+Key sections in the file:
+- :root variables: colour tokens and theme values
+- body/noise overlay: dark background with a subtle texture
+- nav: sticky top navigation bar with blur effect
+- buttons: primary (yellow) and outline button styles
+- hero: large heading section styles
+- search: search input and wrap styles
+- stats bar: the chip counters on the home page
+- branch cards: the card grid, status colour bar on top, hover
+  effects, and status badge colours
+- modals: backdrop and card styles for popup dialogs
+- forms: input, select, textarea, and status option styles
+- toast: the small notification that appears at the bottom
+- auth page: centred card layout for the login/register page
+- admin stats/table: dashboard stat cards and data table styles
+- about page: two-column sections, step cards, team cards,
+  and the CTA block
+- back link, branch hero, detail grid, report items, map
+  placeholder, summary card: all styles for the branch detail
+  page layout
+
+================================================================
+END OF FILE NOTES
+================================================================
