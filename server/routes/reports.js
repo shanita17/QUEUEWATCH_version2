@@ -28,6 +28,22 @@ router.get("/branch/:id", async (req, res) => {
   }
 });
 
+// ── GET system stats (admin) ──
+router.get("/stats", async (req, res) => {
+  if (!req.session.user || req.session.user.Role !== "admin") {
+    return res.status(403).json({ error: "Admin access required" });
+  }
+  try {
+    const db = await poolPromise;
+    const users = await db.get("SELECT COUNT(*) as count FROM Users");
+    const branches = await db.get("SELECT COUNT(*) as count FROM Branches");
+    res.json({ users: users.count, branches: branches.count });
+  } catch (err) {
+    console.error("GET /reports/stats error:", err.message);
+    res.status(500).json({ error: "Failed to load stats" });
+  }
+});
+
 // ── GET all reports (admin) ──
 router.get("/", async (req, res) => {
   try {

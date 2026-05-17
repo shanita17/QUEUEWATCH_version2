@@ -181,6 +181,13 @@
             (r) => r.IsFlagged,
           ).length;
 
+          const statsRes = await fetch("/api/reports/stats", { credentials: "include" });
+          if (statsRes.ok) {
+            const stats = await statsRes.json();
+            document.getElementById("statUsers").textContent = stats.users;
+            document.getElementById("statBranches").textContent = stats.branches;
+          }
+
           const tbody = document.getElementById("adminTableBody");
           if (!reports.length) {
             tbody.innerHTML =
