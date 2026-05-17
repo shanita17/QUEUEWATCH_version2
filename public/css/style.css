@@ -1239,3 +1239,53 @@ nav {
   background: #475569 !important;
   transform: scale(0.95) !important;
 }
+
+/* =========================================================
+   MOBILE RESPONSIVENESS OVERRIDES
+   ========================================================= */
+@media (max-width: 768px) {
+  /* Smaller paddings */
+  nav {
+    padding: 1rem 1.2rem !important;
+    flex-wrap: wrap !important;
+    gap: 1rem !important;
+    justify-content: space-between !important;
+  }
+  .nav-links {
+    gap: 0.8rem !important;
+  }
+  .hero, .main {
+    padding-left: 1.2rem !important;
+    padding-right: 1.2rem !important;
+  }
+  /* Search bar stacking */
+  .search-wrap {
+    flex-direction: column !important;
+  }
+  .search-wrap .btn {
+    width: 100% !important;
+  }
+  /* Ensure cards fit on small screens */
+  .branch-grid {
+    grid-template-columns: 1fr !important;
+  }
+  /* Make filter tabs wrappable */
+  .filter-tabs {
+    flex-wrap: wrap !important;
+    justify-content: flex-start !important;
+  }
+  /* Branch Hero stacking */
+  .branch-hero {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    padding: 1.5rem !important;
+  }
+  /* Admin tables scrollable */
+  .admin-table-wrap {
+    overflow-x: auto !important;
+  }
+  /* Auth forms */
+  .auth-card {
+    padding: 1.8rem !important;
+  }
+}
