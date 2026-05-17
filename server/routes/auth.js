@@ -5,27 +5,38 @@ const bcrypt = require("bcryptjs");
 const { poolPromise } = require("../db");
 const nodemailer = require("nodemailer");
 
-async function getTransporter() {
-  if (process.env.SMTP_USER && process.env.SMTP_PASS) {
-    return nodemailer.createTransport({
-      service: process.env.SMTP_SERVICE || "gmail",
-      auth: {
-        user: process.env.SMTP_USER,
-        pass: process.env.SMTP_PASS,
-      },
-    });
-  } else {
-    let testAccount = await nodemailer.createTestAccount();
-    return nodemailer.createTransport({
-      host: "smtp.ethereal.email",
-      port: 587,
-      secure: false,
-      auth: {
-        user: testAccount.user,
-        pass: testAccount.pass,
-      },
-    });
+// ── HTTP Email Sender (Bypasses Render SMTP Block) ──
+async function sendAppEmail(toEmail, toName, subject, htmlBody) {
+  const apiKey = process.env.BREVO_API_KEY;
+  
+  // If no API key, just log it (development mode)
+  if (!apiKey) {
+    console.log(`\n✉️ [DEV MODE] Email to ${toEmail}`);
+    console.log(`Subject: ${subject}`);
+    console.log(`Content: ${htmlBody}\n`);
+    return;
   }
+
+  const response = await fetch("https://api.brevo.com/v3/smtp/email", {
+    method: "POST",
+    headers: {
+      "Accept": "application/json",
+      "Content-Type": "application/json",
+      "api-key": apiKey
+    },
+    body: JSON.stringify({
+      sender: { name: "QueueWatch SA", email: "ethankokong@gmail.com" },
+      to: [{ email: toEmail, name: toName }],
+      subject: subject,
+      htmlContent: htmlBody
+    })
+  });
+
+  if (!response.ok) {
+    const errText = await response.text();
+    throw new Error("HTTP Email API Error: " + errText);
+  }
+  console.log("✉️ HTTP Email successfully sent to " + toEmail);
 }
 // ── POST /auth/register ──
 router.post("/register", async (req, res) => {
@@ -69,28 +80,18 @@ router.post("/register", async (req, res) => {
 
     // Send Welcome Email asynchronously
     try {
-      let transporter = await getTransporter();
-
-      let info = await transporter.sendMail({
-        from: '"QueueWatch SA" <noreply@queuewatch.co.za>',
-        to: email,
-        subject: "Welcome to QueueWatch SA!",
-        text: `Hi ${fullName},\n\nWelcome to QueueWatch SA! We're thrilled to have you join our community-driven effort to track queue wait times across South Africa.\n\nStart reporting queue times today and help out your community!\n\nCheers,\nThe QueueWatch Team`,
-        html: `
-          <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #ddd; border-radius: 8px;">
-            <h2 style="color: #f5c518;">Welcome to QueueWatch SA! 🇿🇦</h2>
-            <p>Hi <b>${fullName}</b>,</p>
-            <p>We're thrilled to have you join our community-driven effort to track queue wait times across South Africa.</p>
-            <p>Start reporting queue times today and help out your community!</p>
-            <br>
-            <p>Cheers,<br><b>The QueueWatch Team</b></p>
-          </div>
-        `,
-      });
-      console.log("✉️ Welcome email sent to " + email);
-      if (!process.env.SMTP_USER) {
-        console.log("🔗 Preview URL: %s", nodemailer.getTestMessageUrl(info));
-      }
+      const subject = "Welcome to QueueWatch SA!";
+      const htmlBody = `
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #ddd; border-radius: 8px;">
+          <h2 style="color: #f5c518;">Welcome to QueueWatch SA! 🇿🇦</h2>
+          <p>Hi <b>${fullName}</b>,</p>
+          <p>We're thrilled to have you join our community-driven effort to track queue wait times across South Africa.</p>
+          <p>Start reporting queue times today and help out your community!</p>
+          <br>
+          <p>Cheers,<br><b>The QueueWatch Team</b></p>
+        </div>
+      `;
+      await sendAppEmail(email, fullName, subject, htmlBody);
     } catch (emailErr) {
       console.error("Failed to send welcome email:", emailErr);
     }
@@ -161,29 +162,19 @@ router.post("/forgot-password", async (req, res) => {
 
     // Send Reset Email asynchronously
     try {
-      let transporter = await getTransporter();
-
-      let info = await transporter.sendMail({
-        from: '"QueueWatch SA Support" <support@queuewatch.co.za>',
-        to: email,
-        subject: "Password Reset Request",
-        text: `Hi ${user.FullName},\n\nYou requested a password reset. Click here to reset your password: ${resetLink}\n\nIf you didn't request this, you can safely ignore this email.\n\nCheers,\nThe QueueWatch Team`,
-        html: `
-          <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #ddd; border-radius: 8px;">
-            <h2 style="color: #f5c518;">Password Reset Request</h2>
-            <p>Hi <b>${user.FullName}</b>,</p>
-            <p>You recently requested to reset your password for your QueueWatch SA account.</p>
-            <a href="${resetLink}" style="display: inline-block; padding: 10px 20px; background-color: #f5c518; color: #111; text-decoration: none; border-radius: 4px; font-weight: bold; margin: 10px 0;">Reset Password</a>
-            <p>If you did not request this, you can safely ignore this email.</p>
-            <br>
-            <p>Cheers,<br><b>The QueueWatch Team</b></p>
-          </div>
-        `,
-      });
-      console.log("✉️ Password reset email sent to " + email);
-      if (!process.env.SMTP_USER) {
-        console.log("🔗 Preview URL: %s", nodemailer.getTestMessageUrl(info));
-      }
+      const subject = "Password Reset Request";
+      const htmlBody = `
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #ddd; border-radius: 8px;">
+          <h2 style="color: #f5c518;">Password Reset Request</h2>
+          <p>Hi <b>${user.FullName}</b>,</p>
+          <p>You recently requested to reset your password for your QueueWatch SA account.</p>
+          <a href="${resetLink}" style="display: inline-block; padding: 10px 20px; background-color: #f5c518; color: #111; text-decoration: none; border-radius: 4px; font-weight: bold; margin: 10px 0;">Reset Password</a>
+          <p>If you did not request this, you can safely ignore this email.</p>
+          <br>
+          <p>Cheers,<br><b>The QueueWatch Team</b></p>
+        </div>
+      `;
+      await sendAppEmail(email, user.FullName, subject, htmlBody);
     } catch (emailErr) {
       console.error("Failed to send reset email:", emailErr);
     }
