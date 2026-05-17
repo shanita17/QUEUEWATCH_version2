@@ -3,7 +3,7 @@
     "dotenv": "^17.4.2"
   },
   "scripts": {
-    "postinstall": "cd server && npm install",
+    "postinstall": "cd server && npm install --build-from-source sqlite3",
     "start": "cd server && node server.js"
   },
   "engines": {
