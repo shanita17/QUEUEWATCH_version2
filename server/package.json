@@ -1,0 +1,31 @@
+{
+  "name": "queuewatchsa_prototype",
+  "version": "1.0.0",
+  "description": "",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/shanita17/QUEUEWATCH_version2.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/shanita17/QUEUEWATCH_version2/issues"
+  },
+  "homepage": "https://github.com/shanita17/QUEUEWATCH_version2#readme",
+  "dependencies": {
+    "bcryptjs": "^3.0.3",
+    "cors": "^2.8.6",
+    "dotenv": "^17.4.2",
+    "express": "^5.2.1",
+    "express-session": "^1.19.0",
+    "msnodesqlv8": "^5.2.0",
+    "mssql": "^10.0.4",
+    "tedious": "^19.2.1"
+  }
+}
