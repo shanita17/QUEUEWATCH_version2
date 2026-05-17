@@ -2,6 +2,7 @@
 QUEUEWATCH SA — FILE NOTES
 Project: DSW02A1 Group Project
 Team: Dev Squad
+Last Updated: 17 May 2026
 ================================================================
 
 ----------------------------------------------------------------
@@ -11,138 +12,142 @@ This is the main landing page and the first page users see when
 they open the website. It displays a hero section with the
 project tagline, a search bar to find branches, and a live
 stats bar showing how many branches are quiet, busy, very busy,
-or offline. Below that it shows all branch cards in a grid
-layout with filter tabs (All, Home Affairs, SASSA, Clinic,
-Licensing). Clicking any branch card saves that branch to the
-browser's localStorage and navigates to branch.html to show
-its details. This page loads script.js to handle all the card
-rendering and filtering logic.
+or offline. Below that it shows all 31 real Gauteng branch
+cards in a grid layout with filter tabs (All, Home Affairs,
+SASSA, Clinic, Licensing).
+
+Clicking any branch card saves that branch's data to
+localStorage and navigates to branch.html to show its full
+details. This page loads script.js which fetches branch data
+from the real backend API at /api/branches.
+
+STATUS: Fully connected to backend. Real data. ✅
 
 ----------------------------------------------------------------
 2. branches.html — All Branches Page
 ----------------------------------------------------------------
-A dedicated page for browsing all branches with more advanced
-filtering options. Unlike the home page, this page has three
-filters: a text search, a dropdown to filter by branch type
-(Home Affairs, SASSA, Clinic, Licensing), and a dropdown to
-filter by current status (Quiet, Busy, Very Busy, System
-Offline). It also loads script.js for shared data and the
-renderCards function, then runs its own filterAll() function
-to apply the extra filters. Clicking a card works the same
-way as on the home page — saves the branch and goes to
-branch.html.
+A dedicated page for browsing all 31 real Gauteng branches
+with more advanced filtering options. Has three filters: a
+text search, a dropdown to filter by branch type (Home Affairs,
+SASSA, Clinic, Licensing), and a dropdown to filter by current
+status (Quiet, Busy, Very Busy, System Offline).
+
+Loads script.js which fetches from /api/branches, then runs
+its own filterAll() function to apply the extra dropdown
+filters on top. Clicking a card works the same way as the
+home page — saves to localStorage and goes to branch.html.
+
+STATUS: Fully connected to backend. Real data. ✅
 
 ----------------------------------------------------------------
 3. branch.html — Branch Detail Page
 ----------------------------------------------------------------
 This page shows the full details of a specific branch after a
 user clicks on a branch card. It reads the selected branch
-from localStorage (saved when the card was clicked) and
-displays the branch name, type, current status badge, and
-average wait time. On the left it shows a list of recent
-reports submitted by community members, including who reported,
-what time, how long the wait was, and any notes they left. On
-the right it shows a placeholder where Google Maps will load
-(requires an API key to be set up in the backend phase), and
-a summary panel with total reports, peak time, average wait,
-and last update time. The "+ Add Report" button links to
-report.html.
+from localStorage and displays the branch name, type, current
+status badge, average wait time, and address.
+
+On the left it shows a list of real reports fetched from
+/api/reports/branch/:id — showing who reported, what time,
+how long the wait was, and any notes they left. If no reports
+exist, it shows a friendly message. The "+ Add Report" button
+links to report.html.
+
+On the right is a map placeholder (Google Maps API coming),
+and a summary panel with total reports, average wait, and
+last update time. All data is real and live from the database.
+
+STATUS: Fully connected to backend. Real reports loading. ✅
 
 ----------------------------------------------------------------
 4. auth.html — Login / Register Page
 ----------------------------------------------------------------
-This is the authentication page where users can either log in
-to an existing account or register a new one. It uses two
-tabs — Login and Register — that switch between two forms on
-the same page without reloading. The Login form asks for an
-email and password. The Register form asks for full name,
-email, password, and password confirmation. Currently the
-login button shows a toast notification and redirects to the
-home page as a prototype. In the final version this will
-connect to the backend (Node.js / PHP) and the MySQL database
-to properly authenticate users and create sessions.
+Authentication page where users can log in or register. Uses
+two tabs that switch between forms without reloading.
+
+Login sends a POST to /api/auth/login. Register sends a POST
+to /api/auth/register. On success a session is created on
+the server and the user is redirected to the home page.
+Error messages from the API are shown as toast notifications.
+
+Test credentials:
+- Admin: admin@queuewatch.co.za / admin123
+- User:  thabo@example.com / password123
+
+STATUS: Fully connected to backend. Real authentication. ✅
 
 ----------------------------------------------------------------
 5. report.html — Submit a Queue Report Page
 ----------------------------------------------------------------
-This is the page where a logged-in user who is physically at
-a branch can submit a queue report to help other users. The
-form asks the user to select which branch they are at from a
-dropdown list, choose the current status (Quiet, Busy, Very
-Busy, or System Offline) using clickable option buttons, pick
-an estimated wait time, and optionally add a short note
-describing what they see. When submitted, a toast confirmation
-appears and the user is redirected back to the home page. In
-the final version this will write the report to the MySQL
-database via the backend API.
+Page where a logged-in user can submit a queue report. The
+branch dropdown is dynamically loaded from /api/branches. If
+the user came from a branch detail page, that branch is
+pre-selected automatically.
+
+Collects branch, status, estimated wait time, and optional
+notes. Sends a POST to /api/reports. If the user is not
+logged in, they are redirected to auth.html. On success the
+report is saved to the database.
+
+STATUS: Fully connected to backend. Saves to database. ✅
 
 ----------------------------------------------------------------
 6. admin.html — Admin Dashboard Page
 ----------------------------------------------------------------
-This page is for the system administrator to monitor and
-moderate all user-submitted queue reports. It shows four
-summary stat cards at the top: total reports today, number of
-flagged reports, active branches, and registered users. Below
-that is a full table of all reports submitted today showing
-the user, branch, status, wait time, time of submission, and
-a Remove button. Reports that have been flagged as suspicious
-are highlighted in red with a "flagged" tag. Clicking Remove
-fades out and deletes the row from the table. In the final
-version this will connect to the database to actually delete
-records and will require admin authentication to access.
+Protected admin page for moderating user-submitted reports.
+When the page loads it calls /api/auth/me to verify the user
+is logged in AND has the 'admin' role. If not, it shows a
+toast and redirects to auth.html immediately.
+
+Once authenticated, loads all reports from /api/reports and
+displays them in a table. Flagged reports are highlighted
+in red. The Remove button calls DELETE /api/reports/:id to
+permanently delete the report from the database.
+
+Admin login: admin@queuewatch.co.za / admin123
+
+STATUS: Protected. Fully connected to backend. Real delete. ✅
 
 ----------------------------------------------------------------
 7. profile.html — User Profile Page
 ----------------------------------------------------------------
-This page shows a logged-in user's personal profile and
-account settings. At the top is a profile header with the
-user's avatar initials, name, email, membership badge, and
-join date. Below that are three stat cards showing how many
-reports the user has submitted, their accuracy rate, and how
-many different branches they have covered. The left column
-shows the user's three most recent reports with branch name,
-time, status, wait time, and their note. The right column has
-an account settings form where the user can update their name,
-email, and password. The Save Changes button shows a toast
-confirmation.
+Shows a logged-in user's personal profile and account
+settings. Currently displays static placeholder data.
+The account settings form Save Changes button shows a toast
+but does not yet save to the database.
+
+STATUS: UI complete. Not yet connected to backend. ❌
+TODO: Fetch user from /api/auth/me and their reports from
+/api/reports filtered by UserID.
 
 ----------------------------------------------------------------
 8. about.html — About Page
 ----------------------------------------------------------------
-This page explains the purpose and background of the
-QueueWatch SA project. It has a hero section with the mission
-statement, then two sections explaining the problem (long
-unpredictable queues at public service offices in South Africa)
-and the solution (a community-driven reporting platform). Below
-that is a "How It Works" section with four step cards walking
-through the user journey: search, check, report, plan. There
-is also a team section showing the Dev Squad, and a call to
-action at the bottom encouraging users to create an account
-or browse branches.
+Informational page explaining the purpose and background of
+QueueWatch SA. Has a hero section, problem and solution
+sections, a How It Works step guide, team section, and a
+call to action. No backend connection needed.
+
+STATUS: Complete. Static content. ✅
 
 ----------------------------------------------------------------
 9. contact.html — Contact Page
 ----------------------------------------------------------------
-This page provides a way for users to get in touch with the
-Dev Squad. On the left is a contact form with fields for the
-user's name, email, a subject dropdown (General Enquiry,
-Report a Bug, Suggest a Branch, Partnership, Other), and a
-message text area. Clicking Send Message shows a toast
-confirmation. On the right is a project info card showing the
-project name, team, module code, institution, and year, as
-well as quick links to the About, Branches, Report, and
-Register pages.
+Contact form with fields for name, email, subject, and
+message. Currently shows a toast on submit but does not
+send a real email. Would require Nodemailer or similar in
+the final version. Also shows project info and quick links.
+
+STATUS: UI complete. Not yet wired to email service. ⚠️
 
 ----------------------------------------------------------------
 10. 404.html — Page Not Found
 ----------------------------------------------------------------
-This is the error page that appears when a user navigates to
-a URL that does not exist on the site. It displays a large
-"404" number, a short humorous message ("Looks like this page
-joined the queue and never came back"), and two buttons to
-either go back to the home page or browse branches. It uses
-the same nav and styling as the rest of the site so it looks
-consistent.
+Error page shown when a user navigates to a URL that does
+not exist. Shows a large 404, a humorous message, and
+buttons to go home or browse branches.
+
+STATUS: Complete. Static content. ✅
 
 ================================================================
 SHARED FILES
@@ -151,66 +156,96 @@ SHARED FILES
 ----------------------------------------------------------------
 11. script.js — Shared JavaScript File
 ----------------------------------------------------------------
-This is the most important JavaScript file in the project. It
-is loaded by index.html and branches.html and also by
-branch.html for access to shared functions. It contains the
-branch seed data (8 branches with name, type, status, wait
-time, report count, and last updated time), the statusMap
-object that maps status names to CSS classes and colour
-variables, and all the core functions used across the site.
+The most important frontend JavaScript file. Loaded by
+index.html and branches.html. Fetches all 31 real branch
+data from /api/branches and handles rendering, filtering,
+and navigation.
 
 Key functions:
-- waitLabel(w): converts a wait time in minutes into a
-  human-readable label like "2 hrs wait" or "45 min wait"
-- renderCards(list): builds and displays branch cards in the
-  branchGrid element, with onclick handlers that save the
-  branch to localStorage and navigate to branch.html
-- updateStats(list): updates the stat chips on the home page
-  showing counts of quiet, busy, very busy, and offline branches
-- getFiltered(): reads the search input and activeFilter to
-  return the matching list of branches
-- filterCards(): calls getFiltered and then renderCards and
-  updateStats
-- setFilter(type, el): updates the active tab filter and
-  re-renders cards
-- showToast(msg): displays a small notification at the bottom
-  of the screen for 3 seconds
-- The file also has a safety guard at the bottom that only
-  calls filterCards() on pages that actually have a branchGrid
-  element, preventing crashes on pages like branch.html that
-  do not have that element
+- loadBranches(): fetches from /api/branches and maps API
+  response to frontend format
+- waitLabel(w): converts minutes to "2 hrs wait" etc.
+- timeAgo(dateStr): converts timestamp to "5 min ago" etc.
+- renderCards(list): builds branch cards with onclick that
+  saves branch to localStorage and goes to branch.html
+- updateStats(list): updates quiet/busy/very busy/offline
+  chip counters
+- getFiltered(): filters branches by search and active tab
+- filterCards(): calls getFiltered, renderCards, updateStats
+- setFilter(type, el): updates active tab and re-renders
+- showToast(msg): shows bottom notification for 3 seconds
+- Safety guard: only calls loadBranches() on pages with
+  a branchGrid element
+
+STATUS: Fully connected to /api/branches. ✅
 
 ----------------------------------------------------------------
 12. style.css — Shared Stylesheet
 ----------------------------------------------------------------
-This is the single CSS file used by all 10 pages. It defines
-all the visual styling for the entire website so every page
-looks consistent without repeating code. It uses CSS custom
-properties (variables) defined in the :root selector to manage
-the colour scheme — dark background, surface cards, yellow
-accent colour, and status colours for green (quiet), amber
-(busy), red (very busy), and grey (offline).
+Single CSS file used by all 10 pages. Uses CSS custom
+properties (variables) in :root for theming.
 
-Key sections in the file:
-- :root variables: colour tokens and theme values
-- body/noise overlay: dark background with a subtle texture
-- nav: sticky top navigation bar with blur effect
-- buttons: primary (yellow) and outline button styles
-- hero: large heading section styles
-- search: search input and wrap styles
-- stats bar: the chip counters on the home page
-- branch cards: the card grid, status colour bar on top, hover
-  effects, and status badge colours
-- modals: backdrop and card styles for popup dialogs
-- forms: input, select, textarea, and status option styles
-- toast: the small notification that appears at the bottom
-- auth page: centred card layout for the login/register page
-- admin stats/table: dashboard stat cards and data table styles
-- about page: two-column sections, step cards, team cards,
-  and the CTA block
-- back link, branch hero, detail grid, report items, map
-  placeholder, summary card: all styles for the branch detail
-  page layout
+Key sections: root variables, body/noise overlay, nav,
+buttons, hero, search, stats bar, branch cards, forms,
+toast, auth page, admin stats/table, about page sections,
+branch detail layout (back link, branch hero, detail grid,
+report items, map placeholder, summary card).
+
+STATUS: Complete. No changes needed. ✅
+
+================================================================
+SERVER FILES (inside /server folder)
+================================================================
+
+----------------------------------------------------------------
+13. server.js — Express Application Entry Point
+----------------------------------------------------------------
+Main Node.js file that starts the web server on port 3000.
+Sets up Express with CORS, JSON parsing, and session
+middleware. Serves frontend files statically from the parent
+folder. Mounts three API route files under /api. Includes
+a /api/health check endpoint.
+
+Run with: node server.js (from inside the /server folder)
+
+----------------------------------------------------------------
+14. db.js — Database Connection
+----------------------------------------------------------------
+Creates and exports a shared SQL Server connection pool using
+mssql@10.0.4. Reads config from .env. Uses SQL Server
+Authentication. Logs success or exits on failure.
+
+IMPORTANT: Do NOT upgrade mssql — newer versions break on
+this machine. TCP/IP is disabled on Shanita; this config
+works around that using SQL Server Auth on the default port.
+
+----------------------------------------------------------------
+15. routes/branches.js — Branches API Routes
+----------------------------------------------------------------
+GET / — returns all 31 branches with live stats calculated
+via SQL subqueries: latest status today, avg wait today,
+total reports today, and time of last report.
+GET /:id — returns a single branch by BranchID.
+
+----------------------------------------------------------------
+16. routes/reports.js — Reports API Routes
+----------------------------------------------------------------
+GET /branch/:id — all reports for a branch, newest first,
+joined with username. No auth required.
+GET / — all reports for admin dashboard. Admin only.
+POST / — create a new report. Requires active session.
+DELETE /:id — delete a report. Admin only.
+PATCH /:id/flag — flag a report. Admin only.
+
+----------------------------------------------------------------
+17. routes/auth.js — Authentication API Routes
+----------------------------------------------------------------
+POST /register — hashes password with bcryptjs, inserts
+user, starts session.
+POST /login — checks email, compares password (handles both
+hashed and plain text for seed data), creates session.
+POST /logout — destroys session.
+GET /me — returns current logged in user or 401.
 
 ================================================================
 END OF FILE NOTES
