@@ -1,5 +1,8 @@
 {
   "dependencies": {
     "dotenv": "^17.4.2"
+  },
+  "scripts": {
+    "start": "cd server && node server.js"
   }
 }
