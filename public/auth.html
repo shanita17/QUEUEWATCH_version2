@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Login / Register — QueueWatch SA</title>
   <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;800&display=swap" rel="stylesheet"/>
-  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="css/style.css" />
 </head>
 <body>
 <nav>
@@ -37,48 +37,69 @@
     </div>
 
     <!-- LOGIN -->
-    <div id="loginForm">
+    <form id="loginForm" onsubmit="event.preventDefault(); handleLogin();">
       <div class="form-group">
         <label class="form-label">Email Address</label>
-        <input class="form-control" type="email" id="loginEmail" placeholder="you@example.com"/>
+        <input class="form-control" type="email" id="loginEmail" placeholder="you@example.com" required/>
       </div>
       <div class="form-group">
         <label class="form-label">Password</label>
-        <input class="form-control" type="password" id="loginPassword" placeholder="••••••••"/>
+        <input class="form-control" type="password" id="loginPassword" placeholder="••••••••" required/>
       </div>
-      <button class="btn btn-primary" style="width:100%;margin-top:0.5rem;padding:0.8rem" onclick="handleLogin()">
+      <div style="display: flex; justify-content: flex-end; margin-top: -0.5rem; margin-bottom: 0.5rem;">
+        <a onclick="switchTab('forgot')" style="font-size: 0.8rem; color: var(--accent); cursor: pointer;">Forgot Password?</a>
+      </div>
+      <button type="submit" class="btn btn-primary" style="width:100%;margin-top:0.5rem;padding:0.8rem">
         Login to QueueWatch
       </button>
       <p style="text-align:center;margin-top:1rem;font-size:0.82rem;color:var(--muted)">
         Don't have an account? <a onclick="switchTab('register')" style="color:var(--accent);cursor:pointer">Register here</a>
       </p>
-    </div>
+    </form>
 
     <!-- REGISTER -->
-    <div id="registerForm" style="display:none">
+    <form id="registerForm" style="display:none" onsubmit="event.preventDefault(); handleRegister();">
       <div class="form-group">
         <label class="form-label">Full Name</label>
-        <input class="form-control" type="text" id="regName" placeholder="Jane Dlamini"/>
+        <input class="form-control" type="text" id="regName" placeholder="Jane Dlamini" required/>
       </div>
       <div class="form-group">
         <label class="form-label">Email Address</label>
-        <input class="form-control" type="email" id="regEmail" placeholder="you@example.com"/>
+        <input class="form-control" type="email" id="regEmail" placeholder="you@example.com" required/>
       </div>
       <div class="form-group">
         <label class="form-label">Password</label>
-        <input class="form-control" type="password" id="regPassword" placeholder="Min. 6 characters"/>
+        <input class="form-control" type="password" id="regPassword" placeholder="Min. 6 characters" required/>
       </div>
       <div class="form-group">
         <label class="form-label">Confirm Password</label>
-        <input class="form-control" type="password" id="regConfirm" placeholder="••••••••"/>
+        <input class="form-control" type="password" id="regConfirm" placeholder="••••••••" required/>
       </div>
-      <button class="btn btn-primary" style="width:100%;margin-top:0.5rem;padding:0.8rem" onclick="handleRegister()">
+      <button type="submit" class="btn btn-primary" style="width:100%;margin-top:0.5rem;padding:0.8rem">
         Create Account
       </button>
       <p style="text-align:center;margin-top:1rem;font-size:0.82rem;color:var(--muted)">
         Already have an account? <a onclick="switchTab('login')" style="color:var(--accent);cursor:pointer">Login here</a>
       </p>
-    </div>
+    </form>
+
+    <!-- FORGOT PASSWORD -->
+    <form id="forgotForm" style="display:none" onsubmit="event.preventDefault(); handleForgot();">
+      <div style="text-align:center; margin-bottom: 1.5rem;">
+        <h3 style="font-size: 1.2rem; font-weight: 700; margin-bottom: 0.5rem;">Reset Password</h3>
+        <p style="color: var(--muted); font-size: 0.85rem;">Enter your email to receive a password reset link.</p>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Email Address</label>
+        <input class="form-control" type="email" id="forgotEmail" placeholder="you@example.com" required/>
+      </div>
+      <button type="submit" class="btn btn-primary" style="width:100%;margin-top:0.5rem;padding:0.8rem">
+        Send Reset Link
+      </button>
+      <p style="text-align:center;margin-top:1rem;font-size:0.82rem;color:var(--muted)">
+        Remembered it? <a onclick="switchTab('login')" style="color:var(--accent);cursor:pointer">Back to Login</a>
+      </p>
+    </form>
   </div>
 </div>
 
@@ -87,7 +108,8 @@
   function switchTab(tab) {
     document.getElementById('loginForm').style.display    = tab==='login'    ? 'block' : 'none';
     document.getElementById('registerForm').style.display = tab==='register' ? 'block' : 'none';
-    document.getElementById('tabLogin').classList.toggle('active', tab==='login');
+    document.getElementById('forgotForm').style.display   = tab==='forgot'   ? 'block' : 'none';
+    document.getElementById('tabLogin').classList.toggle('active', tab==='login' || tab==='forgot');
     document.getElementById('tabRegister').classList.toggle('active', tab==='register');
   }
 
@@ -138,11 +160,31 @@
     }
   }
 
+  async function handleForgot() {
+    const email = document.getElementById('forgotEmail').value.trim();
+    if (!email) { showToast('⚠️ Please enter your email.'); return; }
+    
+    try {
+      const res = await fetch('/api/auth/forgot-password', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email })
+      });
+      const data = await res.json();
+      if (!res.ok) { showToast('❌ ' + data.error); return; }
+      showToast('✅ ' + data.message);
+      setTimeout(() => switchTab('login'), 3000);
+    } catch(err) {
+      showToast('❌ Failed to send request. Server might be down.');
+    }
+  }
+
   function showToast(msg) {
     const t = document.getElementById('toast');
     t.textContent = msg; t.style.display = 'block';
     setTimeout(() => t.style.display = 'none', 3500);
   }
 </script>
-</body>
+  <script src="js/nav-auth.js"></script>
+  </body>
 </html>

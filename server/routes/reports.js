@@ -1,28 +1,27 @@
 // ─── routes/reports.js ───
 const express = require("express");
 const router = express.Router();
-const { sql, poolPromise } = require("../db");
+const { poolPromise } = require("../db");
 
 // ── GET all reports for a specific branch ──
 router.get("/branch/:id", async (req, res) => {
   try {
-    const pool = await poolPromise;
-    const result = await pool.request().input("id", sql.Int, req.params.id)
-      .query(`
-        SELECT
-          r.ReportID,
-          r.Status,
-          r.WaitMinutes,
-          r.Notes,
-          r.IsFlagged,
-          r.CreatedAt,
-          u.FullName AS UserName
-        FROM WaitingTimeReports r
-        JOIN Users u ON r.UserID = u.UserID
-        WHERE r.BranchID = @id
-        ORDER BY r.CreatedAt DESC
-      `);
-    res.json(result.recordset);
+    const db = await poolPromise;
+    const reports = await db.all(`
+      SELECT
+        r.ReportID,
+        r.Status,
+        r.WaitMinutes,
+        r.Notes,
+        r.IsFlagged,
+        r.CreatedAt,
+        u.FullName AS UserName
+      FROM WaitingTimeReports r
+      JOIN Users u ON r.UserID = u.UserID
+      WHERE r.BranchID = ?
+      ORDER BY r.CreatedAt DESC
+    `, [req.params.id]);
+    res.json(reports);
   } catch (err) {
     console.error("GET /reports/branch/:id error:", err.message);
     res.status(500).json({ error: "Failed to load reports" });
@@ -32,8 +31,8 @@ router.get("/branch/:id", async (req, res) => {
 // ── GET all reports (admin) ──
 router.get("/", async (req, res) => {
   try {
-    const pool = await poolPromise;
-    const result = await pool.request().query(`
+    const db = await poolPromise;
+    const reports = await db.all(`
       SELECT
         r.ReportID,
         r.Status,
@@ -48,7 +47,7 @@ router.get("/", async (req, res) => {
       JOIN Branches b ON r.BranchID = b.BranchID
       ORDER BY r.CreatedAt DESC
     `);
-    res.json(result.recordset);
+    res.json(reports);
   } catch (err) {
     console.error("GET /reports error:", err.message);
     res.status(500).json({ error: "Failed to load reports" });
@@ -73,17 +72,11 @@ router.post("/", async (req, res) => {
     return res.status(400).json({ error: "Invalid status value" });
 
   try {
-    const pool = await poolPromise;
-    await pool
-      .request()
-      .input("branchId", sql.Int, branchId)
-      .input("userId", sql.Int, req.session.user.UserID)
-      .input("status", sql.NVarChar(50), status)
-      .input("waitMinutes", sql.Int, waitMinutes || 0)
-      .input("notes", sql.NVarChar(500), notes || "").query(`
-        INSERT INTO WaitingTimeReports (BranchID, UserID, Status, WaitMinutes, Notes)
-        VALUES (@branchId, @userId, @status, @waitMinutes, @notes)
-      `);
+    const db = await poolPromise;
+    await db.run(`
+      INSERT INTO WaitingTimeReports (BranchID, UserID, Status, WaitMinutes, Notes)
+      VALUES (?, ?, ?, ?, ?)
+    `, [branchId, req.session.user.UserID, status, waitMinutes || 0, notes || ""]);
 
     res.json({ message: "Report submitted successfully" });
   } catch (err) {
@@ -98,11 +91,8 @@ router.delete("/:id", async (req, res) => {
     return res.status(403).json({ error: "Admin access required" });
 
   try {
-    const pool = await poolPromise;
-    await pool
-      .request()
-      .input("id", sql.Int, req.params.id)
-      .query("DELETE FROM WaitingTimeReports WHERE ReportID = @id");
+    const db = await poolPromise;
+    await db.run("DELETE FROM WaitingTimeReports WHERE ReportID = ?", [req.params.id]);
 
     res.json({ message: "Report deleted" });
   } catch (err) {
@@ -117,13 +107,8 @@ router.patch("/:id/flag", async (req, res) => {
     return res.status(403).json({ error: "Admin access required" });
 
   try {
-    const pool = await poolPromise;
-    await pool
-      .request()
-      .input("id", sql.Int, req.params.id)
-      .query(
-        "UPDATE WaitingTimeReports SET IsFlagged = 1 WHERE ReportID = @id",
-      );
+    const db = await poolPromise;
+    await db.run("UPDATE WaitingTimeReports SET IsFlagged = 1 WHERE ReportID = ?", [req.params.id]);
 
     res.json({ message: "Report flagged" });
   } catch (err) {

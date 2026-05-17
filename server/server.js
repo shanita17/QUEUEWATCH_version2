@@ -1,5 +1,5 @@
 // ─── server.js — QueueWatch SA Backend ───
-require("dotenv").config();
+require("dotenv").config({ path: require("path").join(__dirname, "..", ".env") });
 
 const express = require("express");
 const cors = require("cors");
@@ -33,7 +33,7 @@ app.use(
 );
 
 // ── Serve frontend files ──
-app.use(express.static(path.join(__dirname, "..")));
+app.use(express.static(path.join(__dirname, "..", "public")));
 
 // ── API Routes ──
 app.use("/api/branches", require("./routes/branches"));

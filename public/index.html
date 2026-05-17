@@ -1,0 +1,207 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>QueueWatch SA</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="css/style.css" />
+  </head>
+  <body>
+    <nav>
+      <div
+        class="logo"
+        onclick="window.location = 'index.html'"
+        style="cursor: pointer"
+      >
+        <div class="logo-dot"></div>
+        QueueWatch<span style="color: var(--accent)">SA</span>
+      </div>
+      <ul class="nav-links">
+        <li><a href="index.html" class="active">Home</a></li>
+        <li><a href="branches.html">Branches</a></li>
+        <li><a href="admin.html">Admin</a></li>
+        <li><a href="about.html">About</a></li>
+        <li><a href="contact.html">Contact</a></li>
+      </ul>
+      <div style="display: flex; gap: 0.6rem">
+        <a href="auth.html" class="btn btn-outline">Login</a>
+        <a href="auth.html" class="btn btn-primary">Register</a>
+      </div>
+    </nav>
+
+    <section class="hero">
+      <div class="hero-tag">🇿🇦 COMMUNITY-DRIVEN · REAL-TIME</div>
+      <h1>Skip the wait.<br /><span>Know before you go.</span></h1>
+      <p class="hero-sub">
+        Real-time queue updates for Home Affairs, SASSA, clinics, and licensing
+        offices — reported by people already there.
+      </p>
+      <div class="search-wrap">
+        <input
+          class="search-input"
+          type="text"
+          id="searchInput"
+          placeholder="Search branch name or area…"
+          oninput="filterCards()"
+        />
+        <button class="btn btn-primary" onclick="filterCards()">Search</button>
+      </div>
+      <div class="stats-bar">
+        <div class="stat-chip">
+          🟢 <strong id="quietCount">0</strong> quiet now
+        </div>
+        <div class="stat-chip">🟡 <strong id="busyCount">0</strong> busy</div>
+        <div class="stat-chip">
+          🔴 <strong id="vbusyCount">0</strong> very busy
+        </div>
+        <div class="stat-chip">
+          ⚫ <strong id="offlineCount">0</strong> offline
+        </div>
+      </div>
+    </section>
+
+    <main class="main">
+      <div class="section-header">
+        <span class="section-title">// Branches near you</span>
+        <div class="filter-tabs">
+          <button class="tab active" onclick="setFilter('all', this)">
+            All
+          </button>
+          <button class="tab" onclick="setFilter('Home Affairs', this)">
+            Home Affairs
+          </button>
+          <button class="tab" onclick="setFilter('SASSA', this)">SASSA</button>
+          <button class="tab" onclick="setFilter('Clinic', this)">
+            Clinic
+          </button>
+          <button class="tab" onclick="setFilter('Licensing', this)">
+            Licensing
+          </button>
+        </div>
+      </div>
+      <div class="branch-grid" id="branchGrid"></div>
+      <div class="empty-state" id="emptyState">
+        <div class="empty-icon">🔍</div>
+        <p>No branches match your search.</p>
+      </div>
+
+      <!-- GAME SECTION -->
+      <div class="section-header" style="margin-top: 4rem;">
+        <span class="section-title">// Pass the Time</span>
+      </div>
+      <div style="background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 2rem; text-align: center;">
+        <h3 style="margin-bottom: 0.5rem; font-size: 1.4rem; font-weight: 800;">Tic-Tac-Toe</h3>
+        <p style="color: var(--muted); font-size: 0.85rem; margin-bottom: 1.5rem;">Bored in the queue? Grab a friend and play a quick round!</p>
+        
+        <style>
+          .ttt-cell {
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            height: 64px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.2rem;
+            font-family: 'Space Mono', monospace;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+            color: var(--text);
+            user-select: none;
+          }
+          .ttt-cell:hover {
+            background: rgba(245, 197, 24, 0.1);
+            border-color: var(--accent);
+          }
+          .ttt-cell.x { color: var(--accent); }
+          .ttt-cell.o { color: var(--text); }
+        </style>
+        
+        <div id="board" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.5rem; max-width: 220px; margin: 0 auto; margin-bottom: 1.5rem;">
+          <div class="ttt-cell" onclick="makeMove(0)"></div>
+          <div class="ttt-cell" onclick="makeMove(1)"></div>
+          <div class="ttt-cell" onclick="makeMove(2)"></div>
+          <div class="ttt-cell" onclick="makeMove(3)"></div>
+          <div class="ttt-cell" onclick="makeMove(4)"></div>
+          <div class="ttt-cell" onclick="makeMove(5)"></div>
+          <div class="ttt-cell" onclick="makeMove(6)"></div>
+          <div class="ttt-cell" onclick="makeMove(7)"></div>
+          <div class="ttt-cell" onclick="makeMove(8)"></div>
+        </div>
+        
+        <div id="gameStatus" style="font-family: 'Space Mono', monospace; font-weight: 700; margin-bottom: 1rem; color: var(--text); font-size: 0.9rem;">Player X's turn</div>
+        <button class="btn btn-outline" onclick="resetGame()">Restart Game</button>
+      </div>
+
+      <script>
+        let board = ["", "", "", "", "", "", "", "", ""];
+        let currentPlayer = "X";
+        let gameActive = true;
+        const statusDisplay = document.getElementById("gameStatus");
+        const cells = document.querySelectorAll(".ttt-cell");
+
+        function makeMove(i) {
+          if (board[i] !== "" || !gameActive) return;
+          board[i] = currentPlayer;
+          cells[i].textContent = currentPlayer;
+          cells[i].classList.add(currentPlayer.toLowerCase());
+          
+          if (checkWin()) {
+            statusDisplay.textContent = `Player ${currentPlayer} Wins! 🎉`;
+            statusDisplay.style.color = "var(--accent)";
+            gameActive = false;
+            return;
+          }
+          
+          if (!board.includes("")) {
+            statusDisplay.textContent = "It's a Draw! 🤝";
+            statusDisplay.style.color = "var(--muted)";
+            gameActive = false;
+            return;
+          }
+          
+          currentPlayer = currentPlayer === "X" ? "O" : "X";
+          statusDisplay.textContent = `Player ${currentPlayer}'s turn`;
+          statusDisplay.style.color = "var(--text)";
+        }
+
+        function checkWin() {
+          const winConditions = [
+            [0, 1, 2], [3, 4, 5], [6, 7, 8], // rows
+            [0, 3, 6], [1, 4, 7], [2, 5, 8], // cols
+            [0, 4, 8], [2, 4, 6]             // diags
+          ];
+          return winConditions.some(condition => {
+            return condition.every(index => board[index] === currentPlayer);
+          });
+        }
+
+        function resetGame() {
+          board = ["", "", "", "", "", "", "", "", ""];
+          currentPlayer = "X";
+          gameActive = true;
+          statusDisplay.textContent = `Player X's turn`;
+          statusDisplay.style.color = "var(--text)";
+          cells.forEach(cell => {
+            cell.textContent = "";
+            cell.classList.remove("x", "o");
+          });
+        }
+      </script>
+    </main>
+
+    <div class="toast" id="toast"></div>
+    <button class="fab" onclick="window.location = 'report.html'">
+      + Report Queue
+    </button>
+
+    <!-- ONLY script.js needed — renderCards with onclick is already inside it -->
+    <script src="js/script.js"></script>
+    <script src="js/nav-auth.js"></script>
+  </body>
+</html>

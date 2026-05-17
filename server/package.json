@@ -27,6 +27,9 @@
     "express-session": "^1.19.0",
     "msnodesqlv8": "^5.2.0",
     "mssql": "^10.0.4",
+    "nodemailer": "^8.0.7",
+    "sqlite": "^5.1.1",
+    "sqlite3": "^6.0.1",
     "tedious": "^19.2.1"
   }
 }

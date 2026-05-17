@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Reset Password — QueueWatch SA</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+<nav>
+  <div class="logo" onclick="window.location='index.html'" style="cursor:pointer">
+    <div class="logo-dot"></div>
+    QueueWatch<span style="color:var(--accent)">SA</span>
+  </div>
+  <a href="auth.html" class="btn btn-outline" style="text-decoration:none">Back to Login</a>
+</nav>
+
+<div class="auth-page">
+  <div class="auth-card" style="margin-top: -10vh;">
+    <h2 style="margin-bottom:1.5rem; text-align:center;">Create New Password</h2>
+    
+    <form id="resetForm" onsubmit="handleReset(event)">
+      <div class="form-group">
+        <label class="form-label">New Password</label>
+        <input type="password" id="newPassword" class="form-control" autocomplete="new-password" required />
+      </div>
+      <div class="form-group">
+        <label class="form-label">Confirm Password</label>
+        <input type="password" id="confirmPassword" class="form-control" autocomplete="new-password" required />
+      </div>
+      <button type="submit" class="btn btn-primary" style="width:100%; margin-top:1rem;">Reset Password</button>
+    </form>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+  function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.style.display = 'block';
+    setTimeout(() => { t.style.display = 'none'; }, 3000);
+  }
+
+  async function handleReset(e) {
+    e.preventDefault();
+    const btn = e.target.querySelector('button');
+    btn.textContent = "Updating...";
+    
+    const newPassword = document.getElementById('newPassword').value;
+    const confirmPassword = document.getElementById('confirmPassword').value;
+
+    if (newPassword !== confirmPassword) {
+      showToast("Passwords do not match");
+      btn.textContent = "Reset Password";
+      return;
+    }
+
+    // Get token from URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const token = urlParams.get('token');
+
+    if (!token) {
+      showToast("Invalid reset link. Missing token.");
+      btn.textContent = "Reset Password";
+      return;
+    }
+
+    try {
+      const res = await fetch('/api/auth/reset-password', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ token, newPassword })
+      });
+      const data = await res.json();
+      
+      if (!res.ok) {
+        showToast(data.error || "Failed to reset password");
+        btn.textContent = "Reset Password";
+      } else {
+        showToast("Password updated successfully!");
+        btn.textContent = "Success!";
+        setTimeout(() => {
+          window.location.href = 'auth.html';
+        }, 1500);
+      }
+    } catch (err) {
+      showToast("Server error. Try again later.");
+      btn.textContent = "Reset Password";
+    }
+  }
+</script>
+</body>
+</html>
