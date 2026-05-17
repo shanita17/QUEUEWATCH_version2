@@ -48,7 +48,7 @@
 
     <div class="main" style="padding-top: 2rem">
       <div style="margin-bottom: 2rem">
-        <div class="hero-tag">⚙️ MODERATION PANEL</div>
+        <div class="hero-tag"> MODERATION PANEL</div>
         <h2 style="font-size: 2rem; font-weight: 800; margin-top: 0.8rem">
           Admin Dashboard
         </h2>
@@ -145,7 +145,7 @@
 
           if (!res.ok || data.user.Role !== "admin") {
             // Not logged in or not admin — redirect away
-            showToast("⛔ Admin access only. Redirecting...");
+            showToast(" Admin access only. Redirecting...");
             setTimeout(() => (window.location.href = "auth.html"), 1500);
             return false;
           }
@@ -224,16 +224,16 @@
             credentials: "include",
           });
           if (!res.ok) {
-            showToast("❌ Could not delete report.");
+            showToast(" Could not delete report.");
             return;
           }
           const row = btn.closest("tr");
           row.style.opacity = "0";
           row.style.transition = "opacity 0.3s";
           setTimeout(() => row.remove(), 300);
-          showToast("🗑️ Report removed.");
+          showToast(" Report removed.");
         } catch (err) {
-          showToast("❌ Delete failed.");
+          showToast(" Delete failed.");
         }
       }
 

@@ -8,7 +8,7 @@ const poolPromise = open({
   filename: path.join(__dirname, 'database.sqlite'),
   driver: sqlite3.Database
 }).then(async db => {
-  console.log('✅ Connected to SQLite Database — QueueWatchSA');
+  console.log(' Connected to SQLite Database — QueueWatchSA');
 
   // Initialize tables
   await db.exec(`
@@ -48,7 +48,7 @@ const poolPromise = open({
   // Seed data if Branches is empty
   const count = await db.get('SELECT COUNT(*) as count FROM Branches');
   if (count.count === 0) {
-    console.log('🌱 Seeding initial database data...');
+    console.log(' Seeding initial database data...');
     
     // Seed Branches
     await db.exec(`
@@ -86,7 +86,7 @@ const poolPromise = open({
 
   return db;
 }).catch(err => {
-  console.error('❌ Database connection failed:', err.message);
+  console.error(' Database connection failed:', err.message);
   process.exit(1);
 });
 

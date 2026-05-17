@@ -11,7 +11,7 @@ async function sendAppEmail(toEmail, toName, subject, htmlBody) {
   
   // If no API key, just log it (development mode)
   if (!apiKey) {
-    console.log(`\n✉️ [DEV MODE] Email to ${toEmail}`);
+    console.log(`\n [DEV MODE] Email to ${toEmail}`);
     console.log(`Subject: ${subject}`);
     console.log(`Content: ${htmlBody}\n`);
     return;
@@ -36,7 +36,7 @@ async function sendAppEmail(toEmail, toName, subject, htmlBody) {
     const errText = await response.text();
     throw new Error("HTTP Email API Error: " + errText);
   }
-  console.log("✉️ HTTP Email successfully sent to " + toEmail);
+  console.log(" HTTP Email successfully sent to " + toEmail);
 }
 // ── POST /auth/register ──
 router.post("/register", async (req, res) => {
@@ -83,7 +83,7 @@ router.post("/register", async (req, res) => {
       const subject = "Welcome to QueueWatch SA!";
       const htmlBody = `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #ddd; border-radius: 8px;">
-          <h2 style="color: #f5c518;">Welcome to QueueWatch SA! 🇿🇦</h2>
+          <h2 style="color: #f5c518;">Welcome to QueueWatch SA! </h2>
           <p>Hi <b>${fullName}</b>,</p>
           <p>We're thrilled to have you join our community-driven effort to track queue wait times across South Africa.</p>
           <p>Start reporting queue times today and help out your community!</p>

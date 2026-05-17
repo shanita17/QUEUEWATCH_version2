@@ -116,7 +116,7 @@
   async function handleLogin() {
     const email    = document.getElementById('loginEmail').value.trim();
     const password = document.getElementById('loginPassword').value;
-    if (!email || !password) { showToast('⚠️ Please enter your email and password.'); return; }
+    if (!email || !password) { showToast(' Please enter your email and password.'); return; }
 
     try {
       const res  = await fetch('/api/auth/login', {
@@ -126,11 +126,11 @@
         body: JSON.stringify({ email, password }),
       });
       const data = await res.json();
-      if (!res.ok) { showToast('❌ ' + data.error); return; }
-      showToast('👋 Welcome back, ' + data.user.FullName + '!');
+      if (!res.ok) { showToast(' ' + data.error); return; }
+      showToast(' Welcome back, ' + data.user.FullName + '!');
       setTimeout(() => window.location.href = 'index.html', 1500);
     } catch(err) {
-      showToast('❌ Login failed. Is the server running?');
+      showToast(' Login failed. Is the server running?');
     }
   }
 
@@ -140,9 +140,9 @@
     const password = document.getElementById('regPassword').value;
     const confirm  = document.getElementById('regConfirm').value;
 
-    if (!fullName || !email || !password) { showToast('⚠️ All fields are required.'); return; }
-    if (password !== confirm) { showToast('⚠️ Passwords do not match.'); return; }
-    if (password.length < 6) { showToast('⚠️ Password must be at least 6 characters.'); return; }
+    if (!fullName || !email || !password) { showToast(' All fields are required.'); return; }
+    if (password !== confirm) { showToast(' Passwords do not match.'); return; }
+    if (password.length < 6) { showToast(' Password must be at least 6 characters.'); return; }
 
     try {
       const res  = await fetch('/api/auth/register', {
@@ -152,17 +152,17 @@
         body: JSON.stringify({ fullName, email, password }),
       });
       const data = await res.json();
-      if (!res.ok) { showToast('❌ ' + data.error); return; }
-      showToast('✅ Account created! Welcome, ' + data.user.FullName + '!');
+      if (!res.ok) { showToast(' ' + data.error); return; }
+      showToast(' Account created! Welcome, ' + data.user.FullName + '!');
       setTimeout(() => window.location.href = 'index.html', 1500);
     } catch(err) {
-      showToast('❌ Registration failed. Is the server running?');
+      showToast(' Registration failed. Is the server running?');
     }
   }
 
   async function handleForgot() {
     const email = document.getElementById('forgotEmail').value.trim();
-    if (!email) { showToast('⚠️ Please enter your email.'); return; }
+    if (!email) { showToast(' Please enter your email.'); return; }
     
     try {
       const res = await fetch('/api/auth/forgot-password', {
@@ -171,11 +171,11 @@
         body: JSON.stringify({ email })
       });
       const data = await res.json();
-      if (!res.ok) { showToast('❌ ' + data.error); return; }
-      showToast('✅ ' + data.message);
+      if (!res.ok) { showToast(' ' + data.error); return; }
+      showToast(' ' + data.message);
       setTimeout(() => switchTab('login'), 3000);
     } catch(err) {
-      showToast('❌ Failed to send request. Server might be down.');
+      showToast(' Failed to send request. Server might be down.');
     }
   }
 

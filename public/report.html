@@ -28,7 +28,7 @@
 
 <div class="main" style="padding-top:2rem;max-width:640px">
   <a href="index.html" class="back-link">← Back to branches</a>
-  <div class="hero-tag" style="margin-bottom:1rem">📋 SUBMIT A REPORT</div>
+  <div class="hero-tag" style="margin-bottom:1rem"> SUBMIT A REPORT</div>
   <h2 style="font-size:2rem;font-weight:800;margin-bottom:0.5rem">How's the queue?</h2>
   <p style="color:var(--muted);margin-bottom:2rem;font-size:0.95rem">You're helping thousands of South Africans plan smarter. Takes 30 seconds.</p>
 
@@ -43,9 +43,9 @@
     <div class="form-group">
       <label class="form-label">Current Status</label>
       <div class="status-options">
-        <div class="status-opt" data-val="Quiet"          onclick="selectStatus(this)">🟢 Quiet</div>
-        <div class="status-opt" data-val="Busy"           onclick="selectStatus(this)">🟡 Busy</div>
-        <div class="status-opt" data-val="Very Busy"      onclick="selectStatus(this)">🔴 Very Busy</div>
+        <div class="status-opt" data-val="Quiet"          onclick="selectStatus(this)"> Quiet</div>
+        <div class="status-opt" data-val="Busy"           onclick="selectStatus(this)"> Busy</div>
+        <div class="status-opt" data-val="Very Busy"      onclick="selectStatus(this)"> Very Busy</div>
         <div class="status-opt" data-val="System Offline" onclick="selectStatus(this)">⚫ System Offline</div>
       </div>
     </div>
@@ -95,7 +95,7 @@
         sel.value = b.id;
       }
     } catch(err) {
-      showToast('⚠️ Could not load branches.');
+      showToast(' Could not load branches.');
     }
   }
 
@@ -112,8 +112,8 @@
     const waitMinutes= parseInt(document.getElementById('repWait').value);
     const notes      = document.getElementById('repNote').value.trim();
 
-    if (!branchId)       { showToast('⚠️ Please select a branch.'); return; }
-    if (!selectedStatus) { showToast('⚠️ Please select a status.'); return; }
+    if (!branchId)       { showToast(' Please select a branch.'); return; }
+    if (!selectedStatus) { showToast(' Please select a status.'); return; }
 
     try {
       const res  = await fetch('/api/reports', {
@@ -125,16 +125,16 @@
       const data = await res.json();
 
       if (res.status === 401) {
-        showToast('⚠️ You must be logged in to submit a report.');
+        showToast(' You must be logged in to submit a report.');
         setTimeout(() => window.location.href = 'auth.html', 2000);
         return;
       }
-      if (!res.ok) { showToast('❌ ' + data.error); return; }
+      if (!res.ok) { showToast(' ' + data.error); return; }
 
-      showToast('✅ Report submitted — thank you!');
+      showToast(' Report submitted — thank you!');
       setTimeout(() => window.location.href = 'index.html', 1800);
     } catch(err) {
-      showToast('❌ Could not submit report. Is the server running?');
+      showToast(' Could not submit report. Is the server running?');
     }
   }
 

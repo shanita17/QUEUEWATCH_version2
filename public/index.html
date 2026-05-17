@@ -34,7 +34,7 @@
     </nav>
 
     <section class="hero">
-      <div class="hero-tag">🇿🇦 COMMUNITY-DRIVEN · REAL-TIME</div>
+      <div class="hero-tag"> COMMUNITY-DRIVEN · REAL-TIME</div>
       <h1>Skip the wait.<br /><span>Know before you go.</span></h1>
       <p class="hero-sub">
         Real-time queue updates for Home Affairs, SASSA, clinics, and licensing
@@ -52,11 +52,11 @@
       </div>
       <div class="stats-bar">
         <div class="stat-chip">
-          🟢 <strong id="quietCount">0</strong> quiet now
+           <strong id="quietCount">0</strong> quiet now
         </div>
-        <div class="stat-chip">🟡 <strong id="busyCount">0</strong> busy</div>
+        <div class="stat-chip"> <strong id="busyCount">0</strong> busy</div>
         <div class="stat-chip">
-          🔴 <strong id="vbusyCount">0</strong> very busy
+           <strong id="vbusyCount">0</strong> very busy
         </div>
         <div class="stat-chip">
           ⚫ <strong id="offlineCount">0</strong> offline
@@ -85,7 +85,7 @@
       </div>
       <div class="branch-grid" id="branchGrid"></div>
       <div class="empty-state" id="emptyState">
-        <div class="empty-icon">🔍</div>
+        <div class="empty-icon"></div>
         <p>No branches match your search.</p>
       </div>
 
@@ -152,14 +152,14 @@
           cells[i].classList.add(currentPlayer.toLowerCase());
           
           if (checkWin()) {
-            statusDisplay.textContent = `Player ${currentPlayer} Wins! 🎉`;
+            statusDisplay.textContent = `Player ${currentPlayer} Wins! `;
             statusDisplay.style.color = "var(--accent)";
             gameActive = false;
             return;
           }
           
           if (!board.includes("")) {
-            statusDisplay.textContent = "It's a Draw! 🤝";
+            statusDisplay.textContent = "It's a Draw! ";
             statusDisplay.style.color = "var(--muted)";
             gameActive = false;
             return;

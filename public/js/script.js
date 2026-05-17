@@ -47,7 +47,7 @@ async function loadBranches() {
     filterCards();
   } catch (err) {
     console.error('Failed to load branches:', err);
-    showToast('⚠️ Could not load branches. Is the server running?');
+    showToast(' Could not load branches. Is the server running?');
   }
 }
 

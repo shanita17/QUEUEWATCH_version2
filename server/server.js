@@ -57,7 +57,7 @@ app.use("/api/*path", (req, res) => {
 // ── Start server ──
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
-  console.log(`🚀 QueueWatch SA server running at http://localhost:${PORT}`);
-  console.log(`📂 Serving frontend from: ${path.join(__dirname, "..")}`);
-  console.log(`🔗 API available at: http://localhost:${PORT}/api`);
+  console.log(` QueueWatch SA server running at http://localhost:${PORT}`);
+  console.log(` Serving frontend from: ${path.join(__dirname, "..")}`);
+  console.log(` API available at: http://localhost:${PORT}/api`);
 });
