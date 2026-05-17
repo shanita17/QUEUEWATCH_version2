@@ -1,155 +1,256 @@
 <!doctype html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Admin — QueueWatch SA</title>
-  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;800&display=swap" rel="stylesheet"/>
-  <link rel="stylesheet" href="style.css" />
-</head>
-<body>
-<nav>
-  <div class="logo" onclick="window.location='index.html'" style="cursor:pointer">
-    <div class="logo-dot"></div>
-    QueueWatch<span style="color:var(--accent)">SA</span>
-  </div>
-  <ul class="nav-links">
-    <li><a href="index.html">Home</a></li>
-    <li><a href="branches.html">Branches</a></li>
-    <li><a href="admin.html" class="active">Admin</a></li>
-    <li><a href="about.html">About</a></li>
-    <li><a href="contact.html">Contact</a></li>
-  </ul>
-  <div style="display:flex;align-items:center;gap:0.6rem">
-    <span style="font-family:'Space Mono',monospace;font-size:0.72rem;color:var(--accent);background:rgba(245,197,24,0.1);border:1px solid rgba(245,197,24,0.3);padding:0.3rem 0.7rem;border-radius:4px">ADMIN</span>
-    <a href="index.html" class="btn btn-outline" style="font-size:0.8rem" onclick="handleLogout(event)">Logout</a>
-  </div>
-</nav>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin — QueueWatch SA</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <nav>
+      <div
+        class="logo"
+        onclick="window.location = 'index.html'"
+        style="cursor: pointer"
+      >
+        <div class="logo-dot"></div>
+        QueueWatch<span style="color: var(--accent)">SA</span>
+      </div>
+      <ul class="nav-links">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="branches.html">Branches</a></li>
+        <li><a href="admin.html" class="active">Admin</a></li>
+        <li><a href="about.html">About</a></li>
+        <li><a href="contact.html">Contact</a></li>
+      </ul>
+      <div style="display: flex; align-items: center; gap: 0.6rem">
+        <span
+          style="
+            font-family: &quot;Space Mono&quot;, monospace;
+            font-size: 0.72rem;
+            color: var(--accent);
+            background: rgba(245, 197, 24, 0.1);
+            border: 1px solid rgba(245, 197, 24, 0.3);
+            padding: 0.3rem 0.7rem;
+            border-radius: 4px;
+          "
+          >ADMIN</span
+        >
+        <a
+          href="index.html"
+          class="btn btn-outline"
+          style="font-size: 0.8rem"
+          onclick="handleLogout(event)"
+          >Logout</a
+        >
+      </div>
+    </nav>
 
-<div class="main" style="padding-top:2rem">
-  <div style="margin-bottom:2rem">
-    <div class="hero-tag">⚙️ MODERATION PANEL</div>
-    <h2 style="font-size:2rem;font-weight:800;margin-top:0.8rem">Admin Dashboard</h2>
-    <p style="color:var(--muted);margin-top:0.4rem">Review and moderate user-submitted queue reports.</p>
-  </div>
+    <div class="main" style="padding-top: 2rem">
+      <div style="margin-bottom: 2rem">
+        <div class="hero-tag">⚙️ MODERATION PANEL</div>
+        <h2 style="font-size: 2rem; font-weight: 800; margin-top: 0.8rem">
+          Admin Dashboard
+        </h2>
+        <p style="color: var(--muted); margin-top: 0.4rem">
+          Review and moderate user-submitted queue reports.
+        </p>
+      </div>
 
-  <div class="admin-stats">
-    <div class="admin-stat-card">
-      <div class="admin-stat-num" id="statTotal">—</div>
-      <div class="admin-stat-label">Total Reports</div>
+      <div class="admin-stats">
+        <div class="admin-stat-card">
+          <div class="admin-stat-num" id="statTotal">—</div>
+          <div class="admin-stat-label">Total Reports</div>
+        </div>
+        <div class="admin-stat-card">
+          <div
+            class="admin-stat-num"
+            id="statFlagged"
+            style="color: var(--vbusy)"
+          >
+            —
+          </div>
+          <div class="admin-stat-label">Flagged Reports</div>
+        </div>
+        <div class="admin-stat-card">
+          <div class="admin-stat-num" id="statBranches">31</div>
+          <div class="admin-stat-label">Active Branches</div>
+        </div>
+        <div class="admin-stat-card">
+          <div class="admin-stat-num" id="statUsers">—</div>
+          <div class="admin-stat-label">Registered Users</div>
+        </div>
+      </div>
+
+      <div class="section-title" style="margin-bottom: 1rem">
+        // All Reports
+      </div>
+      <div class="admin-table-wrap">
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>User</th>
+              <th>Branch</th>
+              <th>Status</th>
+              <th>Wait</th>
+              <th>Time</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody id="adminTableBody">
+            <tr>
+              <td
+                colspan="6"
+                style="
+                  text-align: center;
+                  color: var(--muted);
+                  padding: 2rem;
+                  font-family: &quot;Space Mono&quot;, monospace;
+                  font-size: 0.8rem;
+                "
+              >
+                Loading reports...
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
     </div>
-    <div class="admin-stat-card">
-      <div class="admin-stat-num" id="statFlagged" style="color:var(--vbusy)">—</div>
-      <div class="admin-stat-label">Flagged Reports</div>
-    </div>
-    <div class="admin-stat-card">
-      <div class="admin-stat-num" id="statBranches">31</div>
-      <div class="admin-stat-label">Active Branches</div>
-    </div>
-    <div class="admin-stat-card">
-      <div class="admin-stat-num" id="statUsers">—</div>
-      <div class="admin-stat-label">Registered Users</div>
-    </div>
-  </div>
 
-  <div class="section-title" style="margin-bottom:1rem">// All Reports</div>
-  <div class="admin-table-wrap">
-    <table class="admin-table">
-      <thead>
-        <tr>
-          <th>User</th>
-          <th>Branch</th>
-          <th>Status</th>
-          <th>Wait</th>
-          <th>Time</th>
-          <th>Action</th>
-        </tr>
-      </thead>
-      <tbody id="adminTableBody">
-        <tr><td colspan="6" style="text-align:center;color:var(--muted);padding:2rem;font-family:'Space Mono',monospace;font-size:0.8rem">Loading reports...</td></tr>
-      </tbody>
-    </table>
-  </div>
-</div>
+    <div class="toast" id="toast"></div>
+    <script>
+      const statusCls = {
+        Quiet: "status-quiet",
+        Busy: "status-busy",
+        "Very Busy": "status-vbusy",
+        "System Offline": "status-offline",
+      };
 
-<div class="toast" id="toast"></div>
-<script>
-  const statusCls = {
-    "Quiet":"status-quiet","Busy":"status-busy",
-    "Very Busy":"status-vbusy","System Offline":"status-offline"
-  };
-
-  function fmt(d){ if(!d) return '—'; const x=new Date(d); return x.toLocaleString('en-ZA',{hour:'2-digit',minute:'2-digit',day:'2-digit',month:'short'}); }
-
-  async function loadReports() {
-    try {
-      const res     = await fetch('/api/reports', { credentials:'include' });
-      const reports = await res.json();
-
-      if (!res.ok) {
-        document.getElementById('adminTableBody').innerHTML =
-          '<tr><td colspan="6" style="text-align:center;color:var(--vbusy);padding:2rem">Access denied — admin login required.</td></tr>';
-        return;
+      function fmt(d) {
+        if (!d) return "—";
+        const x = new Date(d);
+        return x.toLocaleString("en-ZA", {
+          hour: "2-digit",
+          minute: "2-digit",
+          day: "2-digit",
+          month: "short",
+        });
       }
 
-      document.getElementById('statTotal').textContent   = reports.length;
-      document.getElementById('statFlagged').textContent = reports.filter(r=>r.IsFlagged).length;
+      // ── Guard: check if logged in and is admin ──
+      async function checkAdminAccess() {
+        try {
+          const res = await fetch("/api/auth/me", { credentials: "include" });
+          const data = await res.json();
 
-      const tbody = document.getElementById('adminTableBody');
-      if (!reports.length) {
-        tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:var(--muted);padding:2rem">No reports yet.</td></tr>';
-        return;
+          if (!res.ok || data.user.Role !== "admin") {
+            // Not logged in or not admin — redirect away
+            showToast("⛔ Admin access only. Redirecting...");
+            setTimeout(() => (window.location.href = "auth.html"), 1500);
+            return false;
+          }
+
+          // Show logged in user name in nav
+          document.querySelector("nav .btn-outline").textContent = "Logout";
+          return true;
+        } catch (err) {
+          window.location.href = "auth.html";
+          return false;
+        }
       }
 
-      tbody.innerHTML = '';
-      reports.forEach(r => {
-        const tr = document.createElement('tr');
-        if (r.IsFlagged) tr.classList.add('flagged-row');
-        tr.innerHTML = `
-          <td style="font-weight:700">${r.UserName} ${r.IsFlagged ? '<span class="flag-tag">⚑ flagged</span>' : ''}</td>
+      // ── Only load reports if admin ──
+      async function init() {
+        const isAdmin = await checkAdminAccess();
+        if (isAdmin) loadReports();
+      }
+
+      async function loadReports() {
+        try {
+          const res = await fetch("/api/reports", { credentials: "include" });
+          const reports = await res.json();
+
+          if (!res.ok) {
+            document.getElementById("adminTableBody").innerHTML =
+              '<tr><td colspan="6" style="text-align:center;color:var(--vbusy);padding:2rem">Access denied — admin login required.</td></tr>';
+            return;
+          }
+
+          document.getElementById("statTotal").textContent = reports.length;
+          document.getElementById("statFlagged").textContent = reports.filter(
+            (r) => r.IsFlagged,
+          ).length;
+
+          const tbody = document.getElementById("adminTableBody");
+          if (!reports.length) {
+            tbody.innerHTML =
+              '<tr><td colspan="6" style="text-align:center;color:var(--muted);padding:2rem">No reports yet.</td></tr>';
+            return;
+          }
+
+          tbody.innerHTML = "";
+          reports.forEach((r) => {
+            const tr = document.createElement("tr");
+            if (r.IsFlagged) tr.classList.add("flagged-row");
+            tr.innerHTML = `
+          <td style="font-weight:700">${r.UserName} ${r.IsFlagged ? '<span class="flag-tag">⚑ flagged</span>' : ""}</td>
           <td style="color:var(--muted)">${r.BranchName}</td>
-          <td><span class="status-badge ${statusCls[r.Status]||'status-offline'}" style="font-size:0.65rem">${r.Status}</span></td>
+          <td><span class="status-badge ${statusCls[r.Status] || "status-offline"}" style="font-size:0.65rem">${r.Status}</span></td>
           <td style="font-family:'Space Mono',monospace;font-size:0.85rem">${r.WaitMinutes} min</td>
           <td style="font-family:'Space Mono',monospace;font-size:0.85rem;color:var(--muted)">${fmt(r.CreatedAt)}</td>
           <td>
             <button class="admin-btn admin-btn-delete" onclick="deleteReport(${r.ReportID}, this)">Remove</button>
           </td>
         `;
-        tbody.appendChild(tr);
-      });
-    } catch(err) {
-      document.getElementById('adminTableBody').innerHTML =
-        '<tr><td colspan="6" style="text-align:center;color:var(--muted);padding:2rem">Could not load reports.</td></tr>';
-    }
-  }
+            tbody.appendChild(tr);
+          });
+        } catch (err) {
+          document.getElementById("adminTableBody").innerHTML =
+            '<tr><td colspan="6" style="text-align:center;color:var(--muted);padding:2rem">Could not load reports.</td></tr>';
+        }
+      }
 
-  async function deleteReport(id, btn) {
-    try {
-      const res = await fetch('/api/reports/'+id, { method:'DELETE', credentials:'include' });
-      if (!res.ok) { showToast('❌ Could not delete report.'); return; }
-      const row = btn.closest('tr');
-      row.style.opacity = '0';
-      row.style.transition = 'opacity 0.3s';
-      setTimeout(() => row.remove(), 300);
-      showToast('🗑️ Report removed.');
-    } catch(err) {
-      showToast('❌ Delete failed.');
-    }
-  }
+      async function deleteReport(id, btn) {
+        try {
+          const res = await fetch("/api/reports/" + id, {
+            method: "DELETE",
+            credentials: "include",
+          });
+          if (!res.ok) {
+            showToast("❌ Could not delete report.");
+            return;
+          }
+          const row = btn.closest("tr");
+          row.style.opacity = "0";
+          row.style.transition = "opacity 0.3s";
+          setTimeout(() => row.remove(), 300);
+          showToast("🗑️ Report removed.");
+        } catch (err) {
+          showToast("❌ Delete failed.");
+        }
+      }
 
-  async function handleLogout(e) {
-    e.preventDefault();
-    await fetch('/api/auth/logout', { method:'POST', credentials:'include' });
-    window.location.href = 'index.html';
-  }
+      async function handleLogout(e) {
+        e.preventDefault();
+        await fetch("/api/auth/logout", {
+          method: "POST",
+          credentials: "include",
+        });
+        window.location.href = "index.html";
+      }
 
-  function showToast(msg) {
-    const t = document.getElementById('toast');
-    t.textContent = msg; t.style.display = 'block';
-    setTimeout(() => t.style.display = 'none', 3000);
-  }
+      function showToast(msg) {
+        const t = document.getElementById("toast");
+        t.textContent = msg;
+        t.style.display = "block";
+        setTimeout(() => (t.style.display = "none"), 3000);
+      }
 
-  loadReports();
-</script>
-</body>
+      init();
+    </script>
+  </body>
 </html>
