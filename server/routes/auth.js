@@ -156,7 +156,8 @@ router.post("/forgot-password", async (req, res) => {
 
     // Generate a simple base64 token of the email for prototype purposes
     const token = Buffer.from(email).toString('base64');
-    const resetLink = `http://localhost:3000/reset.html?token=${token}`;
+    const protocol = req.secure || req.headers['x-forwarded-proto'] === 'https' ? 'https' : 'http';
+    const resetLink = `${protocol}://${req.get('host')}/reset.html?token=${token}`;
 
     // Send Reset Email asynchronously
     try {
