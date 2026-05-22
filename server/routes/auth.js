@@ -225,4 +225,84 @@ router.get("/me", (req, res) => {
   res.json({ user: req.session.user });
 });
 
+// ── PUT /auth/profile — update user profile information ──
+router.put("/profile", async (req, res) => {
+  if (!req.session.user) {
+    return res.status(401).json({ error: "You must be logged in to update your profile" });
+  }
+
+  const { fullName, email, newPassword } = req.body;
+  const userId = req.session.user.UserID;
+
+  if (!fullName || !email) {
+    return res.status(400).json({ error: "Full Name and Email are required" });
+  }
+
+  try {
+    const db = await poolPromise;
+
+    // Check if email already exists for another user
+    const existing = await db.get("SELECT UserID FROM Users WHERE Email = ? AND UserID != ?", [email, userId]);
+    if (existing) {
+      return res.status(400).json({ error: "An account with this email already exists" });
+    }
+
+    if (newPassword && newPassword.length > 0) {
+      if (newPassword.length < 6) {
+        return res.status(400).json({ error: "Password must be at least 6 characters" });
+      }
+      const hashedPassword = await bcrypt.hash(newPassword, 10);
+      await db.run(
+        "UPDATE Users SET FullName = ?, Email = ?, Password = ? WHERE UserID = ?",
+        [fullName, email, hashedPassword, userId]
+      );
+    } else {
+      await db.run(
+        "UPDATE Users SET FullName = ?, Email = ? WHERE UserID = ?",
+        [fullName, email, userId]
+      );
+    }
+
+    // Update current session user
+    req.session.user.FullName = fullName;
+    req.session.user.Email = email;
+
+    res.json({ message: "Profile updated successfully", user: req.session.user });
+  } catch (err) {
+    console.error("PUT /auth/profile error:", err.message);
+    res.status(500).json({ error: "Failed to update profile" });
+  }
+});
+
+// ── POST /auth/contact — handle contact form submissions ──
+router.post("/contact", async (req, res) => {
+  const { name, email, subject, message } = req.body;
+
+  if (!name || !email || !subject || !message) {
+    return res.status(400).json({ error: "All fields are required" });
+  }
+
+  try {
+    const adminEmail = process.env.SMTP_USER || "ethankokong@gmail.com";
+    const mailSubject = `New Contact Form Submission: ${subject}`;
+    const htmlBody = `
+      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #ddd; border-radius: 8px;">
+        <h2 style="color: #f5c518; border-bottom: 2px solid #f5c518; padding-bottom: 10px;">New Support/Enquiry Message</h2>
+        <p><b>From:</b> ${name} (&lt;${email}&gt;)</p>
+        <p><b>Subject:</b> ${subject}</p>
+        <div style="background-color: #f9f9f9; padding: 15px; border-left: 4px solid #f5c518; margin: 15px 0; white-space: pre-wrap;">${message}</div>
+        <p style="font-size: 0.8rem; color: #888;">Submitted via QueueWatch SA contact form.</p>
+      </div>
+    `;
+
+    // Send email using existing utility
+    await sendAppEmail(adminEmail, "QueueWatch Admin", mailSubject, htmlBody);
+
+    res.json({ message: "Message sent — we'll be in touch!" });
+  } catch (err) {
+    console.error("POST /auth/contact error:", err.message);
+    res.status(500).json({ error: "Failed to send message. Please try again later." });
+  }
+});
+
 module.exports = router;

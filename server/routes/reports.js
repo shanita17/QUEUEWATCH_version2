@@ -133,4 +133,35 @@ router.patch("/:id/flag", async (req, res) => {
   }
 });
 
+// ── GET all reports submitted by the logged in user ──
+router.get("/user", async (req, res) => {
+  if (!req.session.user) {
+    return res.status(401).json({ error: "You must be logged in to fetch your reports" });
+  }
+
+  try {
+    const db = await poolPromise;
+    const reports = await db.all(`
+      SELECT
+        r.ReportID,
+        r.BranchID,
+        r.Status,
+        r.WaitMinutes,
+        r.Notes,
+        r.IsFlagged,
+        r.CreatedAt,
+        b.Name AS BranchName
+      FROM WaitingTimeReports r
+      JOIN Branches b ON r.BranchID = b.BranchID
+      WHERE r.UserID = ?
+      ORDER BY r.CreatedAt DESC
+    `, [req.session.user.UserID]);
+
+    res.json(reports);
+  } catch (err) {
+    console.error("GET /reports/user error:", err.message);
+    res.status(500).json({ error: "Failed to load your reports" });
+  }
+});
+
 module.exports = router;

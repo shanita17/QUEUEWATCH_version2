@@ -54,6 +54,7 @@
         "
       >
         <div
+          id="header-avatar"
           style="
             width: 72px;
             height: 72px;
@@ -72,8 +73,9 @@
           DS
         </div>
         <div style="flex: 1">
-          <h2 style="font-size: 1.5rem; font-weight: 800">DevSquad</h2>
+          <h2 id="header-name" style="font-size: 1.5rem; font-weight: 800">DevSquad</h2>
           <div
+            id="header-email"
             style="
               color: var(--muted);
               font-family: &quot;Space Mono&quot;, monospace;
@@ -92,6 +94,7 @@
             "
           >
             <span
+              id="header-role-badge"
               style="
                 background: rgba(245, 197, 24, 0.1);
                 border: 1px solid rgba(245, 197, 24, 0.3);
@@ -123,15 +126,15 @@
       <!-- STATS -->
       <div class="admin-stats" style="margin-bottom: 1.5rem">
         <div class="admin-stat-card">
-          <div class="admin-stat-num">12</div>
+          <div id="stat-reports-count" class="admin-stat-num">—</div>
           <div class="admin-stat-label">Reports Submitted</div>
         </div>
         <div class="admin-stat-card">
-          <div class="admin-stat-num" style="color: var(--quiet)">94%</div>
+          <div id="stat-accuracy-rate" class="admin-stat-num" style="color: var(--quiet)">—</div>
           <div class="admin-stat-label">Accuracy Rate</div>
         </div>
         <div class="admin-stat-card">
-          <div class="admin-stat-num">3</div>
+          <div id="stat-branches-count" class="admin-stat-num">—</div>
           <div class="admin-stat-label">Branches Covered</div>
         </div>
       </div>
@@ -142,106 +145,9 @@
           <div class="section-title" style="margin-bottom: 1rem">
             // My Recent Reports
           </div>
-          <div class="report-item">
-            <div class="report-item-top">
-              <div>
-                <span class="report-user">Home Affairs Benoni</span
-                ><span class="report-time">09:14 today</span>
-              </div>
-              <div class="status-badge status-vbusy" style="font-size: 0.65rem">
-                Very Busy
-              </div>
-            </div>
-            <div
-              style="
-                display: flex;
-                align-items: baseline;
-                gap: 0.3rem;
-                margin: 0.5rem 0;
-              "
-            >
-              <span
-                style="font-size: 1.4rem; font-weight: 800; color: var(--vbusy)"
-                >2</span
-              >
-              <span
-                style="
-                  font-size: 0.75rem;
-                  color: var(--muted);
-                  font-family: &quot;Space Mono&quot;, monospace;
-                "
-                >hrs wait</span
-              >
-            </div>
-            <div class="report-note">"Queue outside the building"</div>
-          </div>
-          <div class="report-item">
-            <div class="report-item-top">
-              <div>
-                <span class="report-user">SASSA Boksburg</span
-                ><span class="report-time">Yesterday 14:30</span>
-              </div>
-              <div class="status-badge status-busy" style="font-size: 0.65rem">
-                Busy
-              </div>
-            </div>
-            <div
-              style="
-                display: flex;
-                align-items: baseline;
-                gap: 0.3rem;
-                margin: 0.5rem 0;
-              "
-            >
-              <span
-                style="font-size: 1.4rem; font-weight: 800; color: var(--busy)"
-                >45</span
-              >
-              <span
-                style="
-                  font-size: 0.75rem;
-                  color: var(--muted);
-                  font-family: &quot;Space Mono&quot;, monospace;
-                "
-                >min wait</span
-              >
-            </div>
-            <div class="report-note">"Moving fairly quickly"</div>
-          </div>
-          <div class="report-item">
-            <div class="report-item-top">
-              <div>
-                <span class="report-user">Edenvale Licensing</span
-                ><span class="report-time">Mon 08:00</span>
-              </div>
-              <div class="status-badge status-quiet" style="font-size: 0.65rem">
-                Quiet
-              </div>
-            </div>
-            <div
-              style="
-                display: flex;
-                align-items: baseline;
-                gap: 0.3rem;
-                margin: 0.5rem 0;
-              "
-            >
-              <span
-                style="font-size: 1.4rem; font-weight: 800; color: var(--quiet)"
-                >10</span
-              >
-              <span
-                style="
-                  font-size: 0.75rem;
-                  color: var(--muted);
-                  font-family: &quot;Space Mono&quot;, monospace;
-                "
-                >min wait</span
-              >
-            </div>
-            <div class="report-note">
-              "Very quiet first thing in the morning"
-            </div>
+          <div id="user-reports-list">
+            <!-- Dynamic reports injected here by profile.js -->
+            <div style="text-align: center; padding: 2rem; color: var(--muted);">Loading your reports...</div>
           </div>
         </div>
 
@@ -260,19 +166,21 @@
           >
             <div class="form-group" style="padding: 1.2rem 1.2rem 0">
               <label class="form-label">Full Name</label>
-              <input class="form-control" type="text" value="DevSquad" />
+              <input id="profile-name" class="form-control" type="text" placeholder="Your Name" />
             </div>
             <div class="form-group" style="padding: 0 1.2rem">
               <label class="form-label">Email</label>
               <input
+                id="profile-email"
                 class="form-control"
                 type="email"
-                value="contact@devsquad.co.za"
+                placeholder="your.email@example.com"
               />
             </div>
             <div class="form-group" style="padding: 0 1.2rem">
               <label class="form-label">New Password</label>
               <input
+                id="profile-password"
                 class="form-control"
                 type="password"
                 placeholder="Leave blank to keep current"
@@ -280,9 +188,9 @@
             </div>
             <div style="padding: 0 1.2rem 1.2rem">
               <button
+                id="profile-save-btn"
                 class="btn btn-primary"
                 style="width: 100%"
-                onclick="showToast(' Profile updated!')"
               >
                 Save Changes
               </button>
@@ -293,14 +201,7 @@
     </div>
 
     <div class="toast" id="toast"></div>
-    <script>
-      function showToast(msg) {
-        const t = document.getElementById("toast");
-        t.textContent = msg;
-        t.style.display = "block";
-        setTimeout(() => (t.style.display = "none"), 3000);
-      }
-    </script>
     <script src="js/nav-auth.js"></script>
+    <script src="js/profile.js"></script>
   </body>
 </html>

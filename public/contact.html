@@ -61,6 +61,7 @@
           <div class="form-group">
             <label class="form-label">Your Name</label>
             <input
+              id="contact-name"
               class="form-control"
               type="text"
               placeholder="Jane Dlamini"
@@ -69,6 +70,7 @@
           <div class="form-group">
             <label class="form-label">Email Address</label>
             <input
+              id="contact-email"
               class="form-control"
               type="email"
               placeholder="you@example.com"
@@ -76,7 +78,7 @@
           </div>
           <div class="form-group">
             <label class="form-label">Subject</label>
-            <select class="form-select">
+            <select id="contact-subject" class="form-select">
               <option>General Enquiry</option>
               <option>Report a Bug</option>
               <option>Suggest a Branch</option>
@@ -87,6 +89,7 @@
           <div class="form-group">
             <label class="form-label">Message</label>
             <textarea
+              id="contact-message"
               class="form-control"
               rows="5"
               placeholder="Tell us what's on your mind…"
@@ -94,9 +97,9 @@
             ></textarea>
           </div>
           <button
+            id="contact-submit"
             class="btn btn-primary"
             style="width: 100%; padding: 0.9rem"
-            onclick="sendMsg()"
           >
             Send Message
           </button>
@@ -166,12 +169,74 @@
 
     <div class="toast" id="toast"></div>
     <script>
-      function sendMsg() {
-        const t = document.getElementById("toast");
-        t.textContent = " Message sent — we'll be in touch!";
-        t.style.display = "block";
-        setTimeout(() => (t.style.display = "none"), 3000);
-      }
+      document.addEventListener("DOMContentLoaded", () => {
+        const submitBtn = document.getElementById("contact-submit");
+        const nameInput = document.getElementById("contact-name");
+        const emailInput = document.getElementById("contact-email");
+        const subjectInput = document.getElementById("contact-subject");
+        const messageInput = document.getElementById("contact-message");
+        const toast = document.getElementById("toast");
+
+        function showToast(msg) {
+          toast.textContent = msg;
+          toast.style.display = "block";
+          setTimeout(() => { toast.style.display = "none"; }, 3000);
+        }
+
+        if (submitBtn) {
+          submitBtn.addEventListener("click", async (e) => {
+            e.preventDefault();
+
+            const name = nameInput.value.trim();
+            const email = emailInput.value.trim();
+            const subject = subjectInput.value;
+            const message = messageInput.value.trim();
+
+            if (!name || !email || !subject || !message) {
+              showToast("All fields are required");
+              return;
+            }
+
+            // Basic email regex validation
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(email)) {
+              showToast("Please enter a valid email address");
+              return;
+            }
+
+            try {
+              submitBtn.disabled = true;
+              submitBtn.textContent = "Sending Message...";
+
+              const res = await fetch("/api/auth/contact", {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ name, email, subject, message })
+              });
+
+              const data = await res.json();
+
+              if (!res.ok) {
+                showToast(data.error || "Failed to send message");
+              } else {
+                showToast("Message sent — we'll be in touch!");
+                // Clear fields
+                nameInput.value = "";
+                emailInput.value = "";
+                messageInput.value = "";
+              }
+            } catch (err) {
+              console.error("Contact send failed:", err);
+              showToast("An error occurred. Please try again.");
+            } finally {
+              submitBtn.disabled = false;
+              submitBtn.textContent = "Send Message";
+            }
+          });
+        }
+      });
     </script>
     <script src="js/nav-auth.js"></script>
   </body>
