@@ -40,15 +40,24 @@ async function sendAppEmail(toEmail, toName, subject, htmlBody) {
 }
 // ── POST /auth/register ──
 router.post("/register", async (req, res) => {
-  const { fullName, email, password } = req.body;
+  const { fullName, email, password, captcha } = req.body;
 
-  if (!fullName || !email || !password)
+  if (!fullName || !email || !password || !captcha)
     return res.status(400).json({ error: "All fields are required" });
 
-  if (password.length < 6)
-    return res
-      .status(400)
-      .json({ error: "Password must be at least 6 characters" });
+  if (!req.session.captcha || captcha.trim().toLowerCase() !== req.session.captcha) {
+    return res.status(400).json({ error: "Incorrect CAPTCHA. Please try again." });
+  }
+
+  // Clear captcha to prevent replay attacks
+  delete req.session.captcha;
+
+  const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).{8,}$/;
+  if (!passwordRegex.test(password)) {
+    return res.status(400).json({
+      error: "Password must be at least 8 characters long and contain at least one uppercase letter, one lowercase letter, one number, and one special character."
+    });
+  }
 
   try {
     const db = await poolPromise;
@@ -190,7 +199,12 @@ router.post("/forgot-password", async (req, res) => {
 router.post("/reset-password", async (req, res) => {
   const { token, newPassword } = req.body;
   if (!token || !newPassword) return res.status(400).json({ error: "Missing token or password" });
-  if (newPassword.length < 6) return res.status(400).json({ error: "Password must be at least 6 characters" });
+  const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).{8,}$/;
+  if (!passwordRegex.test(newPassword)) {
+    return res.status(400).json({
+      error: "Password must be at least 8 characters long and contain at least one uppercase letter, one lowercase letter, one number, and one special character."
+    });
+  }
 
   try {
     const email = Buffer.from(token, 'base64').toString('ascii');
@@ -248,8 +262,11 @@ router.put("/profile", async (req, res) => {
     }
 
     if (newPassword && newPassword.length > 0) {
-      if (newPassword.length < 6) {
-        return res.status(400).json({ error: "Password must be at least 6 characters" });
+      const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).{8,}$/;
+      if (!passwordRegex.test(newPassword)) {
+        return res.status(400).json({
+          error: "Password must be at least 8 characters long and contain at least one uppercase letter, one lowercase letter, one number, and one special character."
+        });
       }
       const hashedPassword = await bcrypt.hash(newPassword, 10);
       await db.run(
@@ -276,11 +293,18 @@ router.put("/profile", async (req, res) => {
 
 // ── POST /auth/contact — handle contact form submissions ──
 router.post("/contact", async (req, res) => {
-  const { name, email, subject, message } = req.body;
+  const { name, email, subject, message, captcha } = req.body;
 
-  if (!name || !email || !subject || !message) {
+  if (!name || !email || !subject || !message || !captcha) {
     return res.status(400).json({ error: "All fields are required" });
   }
+
+  if (!req.session.captcha || captcha.trim().toLowerCase() !== req.session.captcha) {
+    return res.status(400).json({ error: "Incorrect CAPTCHA. Please try again." });
+  }
+
+  // Clear captcha to prevent replay attacks
+  delete req.session.captcha;
 
   try {
     const adminEmail = process.env.SMTP_USER || "ethankokong@gmail.com";
@@ -303,6 +327,56 @@ router.post("/contact", async (req, res) => {
     console.error("POST /auth/contact error:", err.message);
     res.status(500).json({ error: "Failed to send message. Please try again later." });
   }
+});
+
+// ── GET /auth/captcha — Generate SVG CAPTCHA ──
+router.get("/captcha", (req, res) => {
+  const chars = "ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnpqrstuvwxyz23456789";
+  let code = "";
+  for (let i = 0; i < 5; i++) {
+    code += chars.charAt(Math.floor(Math.random() * chars.length));
+  }
+
+  req.session.captcha = code.toLowerCase();
+
+  const width = 150;
+  const height = 45;
+  let svg = `<svg width="${width}" height="${height}" viewBox="0 0 ${width} ${height}" xmlns="http://www.w3.org/2000/svg" style="background: #1c2030; border: 1px solid #252a3a; border-radius: 8px; user-select: none;">`;
+
+  // Draw background noise lines
+  for (let i = 0; i < 5; i++) {
+    const x1 = Math.random() * width;
+    const y1 = Math.random() * height;
+    const x2 = Math.random() * width;
+    const y2 = Math.random() * height;
+    const strokeColor = i % 2 === 0 ? "#f5c518" : "#ff6b35";
+    svg += `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${strokeColor}" stroke-width="1.5" opacity="0.18" />`;
+  }
+
+  // Draw noise dots
+  for (let i = 0; i < 35; i++) {
+    const cx = Math.random() * width;
+    const cy = Math.random() * height;
+    const r = Math.random() * 1.5 + 0.8;
+    svg += `<circle cx="${cx}" cy="${cy}" r="${r}" fill="#6b7280" opacity="0.35" />`;
+  }
+
+  // Draw characters
+  for (let i = 0; i < code.length; i++) {
+    const char = code[i];
+    const fontSize = Math.floor(Math.random() * 6) + 22;
+    const rotate = Math.floor(Math.random() * 26) - 13;
+    const x = 15 + i * 25 + Math.random() * 4;
+    const y = 30 + Math.random() * 4 - 2;
+    const color = i % 2 === 0 ? "#f5c518" : "#ff6b35";
+    svg += `<text x="${x}" y="${y}" font-family="'Space Mono', monospace" font-size="${fontSize}" font-weight="bold" fill="${color}" transform="rotate(${rotate}, ${x}, ${y})" opacity="0.9">${char}</text>`;
+  }
+
+  svg += `</svg>`;
+
+  res.setHeader("Content-Type", "image/svg+xml");
+  res.setHeader("Cache-Control", "no-store, no-cache, must-revalidate, private");
+  res.send(svg);
 });
 
 module.exports = router;

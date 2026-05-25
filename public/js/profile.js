@@ -201,9 +201,12 @@ document.addEventListener("DOMContentLoaded", async () => {
         return;
       }
 
-      if (newPassword && newPassword.length < 6) {
-        showToast("New password must be at least 6 characters");
-        return;
+      if (newPassword && newPassword.length > 0) {
+        const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).{8,}$/;
+        if (!passwordRegex.test(newPassword)) {
+          showToast("New password must be at least 8 characters long and contain at least one uppercase letter, one lowercase letter, one number, and one special character.");
+          return;
+        }
       }
 
       try {

@@ -69,11 +69,22 @@
       </div>
       <div class="form-group">
         <label class="form-label">Password</label>
-        <input class="form-control" type="password" id="regPassword" placeholder="Min. 6 characters" required/>
+        <input class="form-control" type="password" id="regPassword" placeholder="Min. 8 chars (A-Z, a-z, 0-9, special)" required/>
       </div>
       <div class="form-group">
         <label class="form-label">Confirm Password</label>
         <input class="form-control" type="password" id="regConfirm" placeholder="••••••••" required/>
+      </div>
+      <!-- CAPTCHA -->
+      <div class="form-group">
+        <label class="form-label">Security Verification</label>
+        <div style="display: flex; gap: 0.5rem; align-items: center; margin-bottom: 0.5rem;">
+          <img id="registerCaptchaImg" src="/api/auth/captcha" alt="CAPTCHA" style="height: 45px; border-radius: 8px; flex: 1; min-width: 120px; border: 1px solid var(--border);" />
+          <button type="button" class="btn btn-outline" onclick="refreshRegisterCaptcha()" style="padding: 0; display: flex; align-items: center; justify-content: center; height: 45px; width: 45px; flex-shrink: 0;" title="Refresh CAPTCHA">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/></svg>
+          </button>
+        </div>
+        <input class="form-control" type="text" id="regCaptcha" placeholder="Enter CAPTCHA code" required autocomplete="off" />
       </div>
       <button type="submit" class="btn btn-primary" style="width:100%;margin-top:0.5rem;padding:0.8rem">
         Create Account
@@ -105,12 +116,22 @@
 
 <div class="toast" id="toast"></div>
 <script>
+  function refreshRegisterCaptcha() {
+    const img = document.getElementById('registerCaptchaImg');
+    if (img) img.src = '/api/auth/captcha?t=' + Date.now();
+    const input = document.getElementById('regCaptcha');
+    if (input) input.value = '';
+  }
+
   function switchTab(tab) {
     document.getElementById('loginForm').style.display    = tab==='login'    ? 'block' : 'none';
     document.getElementById('registerForm').style.display = tab==='register' ? 'block' : 'none';
     document.getElementById('forgotForm').style.display   = tab==='forgot'   ? 'block' : 'none';
     document.getElementById('tabLogin').classList.toggle('active', tab==='login' || tab==='forgot');
     document.getElementById('tabRegister').classList.toggle('active', tab==='register');
+    if (tab === 'register') {
+      refreshRegisterCaptcha();
+    }
   }
 
   async function handleLogin() {
@@ -139,24 +160,34 @@
     const email    = document.getElementById('regEmail').value.trim();
     const password = document.getElementById('regPassword').value;
     const confirm  = document.getElementById('regConfirm').value;
+    const captcha  = document.getElementById('regCaptcha').value.trim();
 
-    if (!fullName || !email || !password) { showToast(' All fields are required.'); return; }
+    if (!fullName || !email || !password || !captcha) { showToast(' All fields are required.'); return; }
     if (password !== confirm) { showToast(' Passwords do not match.'); return; }
-    if (password.length < 6) { showToast(' Password must be at least 6 characters.'); return; }
+    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).{8,}$/;
+    if (!passwordRegex.test(password)) {
+      showToast(' Password must be at least 8 characters long and contain at least one uppercase letter, one lowercase letter, one number, and one special character.');
+      return;
+    }
 
     try {
       const res  = await fetch('/api/auth/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
-        body: JSON.stringify({ fullName, email, password }),
+        body: JSON.stringify({ fullName, email, password, captcha }),
       });
       const data = await res.json();
-      if (!res.ok) { showToast(' ' + data.error); return; }
+      if (!res.ok) { 
+        showToast(' ' + data.error); 
+        refreshRegisterCaptcha();
+        return; 
+      }
       showToast(' Account created! Welcome, ' + data.user.FullName + '!');
       setTimeout(() => window.location.href = 'index.html', 1500);
     } catch(err) {
       showToast(' Registration failed. Is the server running?');
+      refreshRegisterCaptcha();
     }
   }
 

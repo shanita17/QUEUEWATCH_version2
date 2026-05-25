@@ -96,6 +96,17 @@
               style="resize: vertical"
             ></textarea>
           </div>
+          <!-- CAPTCHA -->
+          <div class="form-group">
+            <label class="form-label">Security Verification</label>
+            <div style="display: flex; gap: 0.5rem; align-items: center; margin-bottom: 0.5rem;">
+              <img id="contactCaptchaImg" src="/api/auth/captcha" alt="CAPTCHA" style="height: 45px; border-radius: 8px; flex: 1; min-width: 120px; border: 1px solid var(--border);" />
+              <button type="button" class="btn btn-outline" onclick="refreshContactCaptcha()" style="padding: 0; display: flex; align-items: center; justify-content: center; height: 45px; width: 45px; flex-shrink: 0;" title="Refresh CAPTCHA">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/></svg>
+              </button>
+            </div>
+            <input class="form-control" type="text" id="contact-captcha" placeholder="Enter CAPTCHA code" required autocomplete="off" />
+          </div>
           <button
             id="contact-submit"
             class="btn btn-primary"
@@ -175,6 +186,7 @@
         const emailInput = document.getElementById("contact-email");
         const subjectInput = document.getElementById("contact-subject");
         const messageInput = document.getElementById("contact-message");
+        const captchaInput = document.getElementById("contact-captcha");
         const toast = document.getElementById("toast");
 
         function showToast(msg) {
@@ -182,6 +194,17 @@
           toast.style.display = "block";
           setTimeout(() => { toast.style.display = "none"; }, 3000);
         }
+
+        function refreshContactCaptcha() {
+          const img = document.getElementById('contactCaptchaImg');
+          if (img) img.src = '/api/auth/captcha?t=' + Date.now();
+          const input = document.getElementById('contact-captcha');
+          if (input) input.value = '';
+        }
+        window.refreshContactCaptcha = refreshContactCaptcha;
+
+        // Load captcha initially
+        refreshContactCaptcha();
 
         if (submitBtn) {
           submitBtn.addEventListener("click", async (e) => {
@@ -191,8 +214,9 @@
             const email = emailInput.value.trim();
             const subject = subjectInput.value;
             const message = messageInput.value.trim();
+            const captcha = captchaInput.value.trim();
 
-            if (!name || !email || !subject || !message) {
+            if (!name || !email || !subject || !message || !captcha) {
               showToast("All fields are required");
               return;
             }
@@ -213,23 +237,27 @@
                 headers: {
                   "Content-Type": "application/json"
                 },
-                body: JSON.stringify({ name, email, subject, message })
+                body: JSON.stringify({ name, email, subject, message, captcha })
               });
 
               const data = await res.json();
 
               if (!res.ok) {
                 showToast(data.error || "Failed to send message");
+                refreshContactCaptcha();
               } else {
                 showToast("Message sent — we'll be in touch!");
                 // Clear fields
                 nameInput.value = "";
                 emailInput.value = "";
                 messageInput.value = "";
+                captchaInput.value = "";
+                refreshContactCaptcha();
               }
             } catch (err) {
               console.error("Contact send failed:", err);
               showToast("An error occurred. Please try again.");
+              refreshContactCaptcha();
             } finally {
               submitBtn.disabled = false;
               submitBtn.textContent = "Send Message";
