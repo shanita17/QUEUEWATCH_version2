@@ -2,250 +2,536 @@
 QUEUEWATCH SA — FILE NOTES
 Project: DSW02A1 Group Project
 Team: Dev Squad
-Last Updated: 17 May 2026
+Institution: University of Johannesburg
+Last Updated: June 2026
+================================================================
+
+PROJECT SUMMARY
+----------------------------------------------------------------
+QueueWatch SA is a full-stack community queue-reporting web
+app for South African public service offices (Home Affairs,
+SASSA, Clinics, Licensing). Citizens report real-time queue
+conditions at registered Gauteng branches so others can plan
+smarter before they leave home.
+
+Stack: Node.js + Express.js backend, SQLite database
+(better-sqlite3), Vanilla HTML/CSS/JS frontend, Brevo
+transactional email API, session-based auth (bcryptjs),
+deployed on Render.com.
+
+================================================================
+FRONTEND FILES (inside /public folder)
 ================================================================
 
 ----------------------------------------------------------------
-1. index.html — Home Page
+1. index.html — Home / Landing Page
 ----------------------------------------------------------------
-This is the main landing page and the first page users see when
-they open the website. It displays a hero section with the
-project tagline, a search bar to find branches, and a live
-stats bar showing how many branches are quiet, busy, very busy,
-or offline. Below that it shows all 31 real Gauteng branch
-cards in a grid layout with filter tabs (All, Home Affairs,
-SASSA, Clinic, Licensing).
+Main landing page. Hero section with tagline and search bar.
+Live stats bar counts how many branches are Quiet / Busy /
+Very Busy / System Offline. Branch cards rendered in a CSS
+grid with filter tabs (All, Home Affairs, SASSA, Clinic,
+Licensing). Clicking a card saves the branch object to
+localStorage and navigates to branch.html.
 
-Clicking any branch card saves that branch's data to
-localStorage and navigates to branch.html to show its full
-details. This page loads script.js which fetches branch data
-from the real backend API at /api/branches.
+Also contains an inline Tic-Tac-Toe game at the bottom of
+the page under "// Pass the Time" — a fun bonus feature for
+users waiting in queues.
+
+Loads: script.js, nav-auth.js
+API calls: GET /api/branches
 
 STATUS: Fully connected to backend. Real data. ✅
 
 ----------------------------------------------------------------
 2. branches.html — All Branches Page
 ----------------------------------------------------------------
-A dedicated page for browsing all 31 real Gauteng branches
-with more advanced filtering options. Has three filters: a
-text search, a dropdown to filter by branch type (Home Affairs,
-SASSA, Clinic, Licensing), and a dropdown to filter by current
-status (Quiet, Busy, Very Busy, System Offline).
+Dedicated browse page with three simultaneous filters: text
+search, branch type dropdown (Home Affairs / SASSA / Clinic /
+Licensing), and status dropdown (Quiet / Busy / Very Busy /
+System Offline). More powerful than the home page filter tabs.
 
-Loads script.js which fetches from /api/branches, then runs
-its own filterAll() function to apply the extra dropdown
-filters on top. Clicking a card works the same way as the
-home page — saves to localStorage and goes to branch.html.
+Loads script.js for branch data, then overrides renderCards
+with its own filterAll() that applies all three filters.
+Clicking a card works the same as index.html.
+
+Loads: script.js, nav-auth.js
+API calls: GET /api/branches
 
 STATUS: Fully connected to backend. Real data. ✅
 
 ----------------------------------------------------------------
 3. branch.html — Branch Detail Page
 ----------------------------------------------------------------
-This page shows the full details of a specific branch after a
-user clicks on a branch card. It reads the selected branch
-from localStorage and displays the branch name, type, current
-status badge, average wait time, and address.
+Reads selected branch from localStorage (set when user
+clicks a card). Displays branch name, type, status badge,
+average wait time, and address. Left panel shows live report
+feed from the database. Right panel shows an embedded Google
+Maps iframe (queried by branch name) and a summary card
+with total reports, peak time, avg wait, and last update.
 
-On the left it shows a list of real reports fetched from
-/api/reports/branch/:id — showing who reported, what time,
-how long the wait was, and any notes they left. If no reports
-exist, it shows a friendly message. The "+ Add Report" button
-links to report.html.
+The "+ Add Report" button links to report.html. Reports show
+username, timestamp, status badge, wait time, and optional
+notes. If no reports exist, a friendly prompt is shown.
 
-On the right is a map placeholder (Google Maps API coming),
-and a summary panel with total reports, average wait, and
-last update time. All data is real and live from the database.
+Loads: script.js, nav-auth.js
+API calls: GET /api/reports/branch/:id
 
-STATUS: Fully connected to backend. Real reports loading. ✅
+STATUS: Fully connected to backend. Google Maps embedded. ✅
 
 ----------------------------------------------------------------
-4. auth.html — Login / Register Page
+4. auth.html — Login / Register / Forgot Password Page
 ----------------------------------------------------------------
-Authentication page where users can log in or register. Uses
-two tabs that switch between forms without reloading.
+Single page with three tab states: Login, Register, Forgot
+Password. Tabs switch without page reload.
 
-Login sends a POST to /api/auth/login. Register sends a POST
-to /api/auth/register. On success a session is created on
-the server and the user is redirected to the home page.
-Error messages from the API are shown as toast notifications.
+Login: POST /api/auth/login → session cookie → redirect home
+Register: POST /api/auth/register → session → redirect home
+Forgot: POST /api/auth/forgot-password → sends reset email
+
+CAPTCHA is required on the Register form. Generated by
+GET /api/auth/captcha (SVG image). A refresh button lets
+the user get a new code. CAPTCHA answer is validated
+server-side against req.session.captcha.
+
+Password rules enforced both client and server side:
+- Min 8 chars
+- At least one uppercase, one lowercase, one digit,
+  one special character
 
 Test credentials:
 - Admin: admin@queuewatch.co.za / admin123
 - User:  thabo@example.com / password123
 
-STATUS: Fully connected to backend. Real authentication. ✅
+Loads: nav-auth.js
+API calls: POST /api/auth/login, /register, /forgot-password,
+           GET /api/auth/captcha
+
+STATUS: Fully connected. CAPTCHA active. ✅
 
 ----------------------------------------------------------------
-5. report.html — Submit a Queue Report Page
+5. reset.html — Password Reset Page
 ----------------------------------------------------------------
-Page where a logged-in user can submit a queue report. The
-branch dropdown is dynamically loaded from /api/branches. If
-the user came from a branch detail page, that branch is
-pre-selected automatically.
+Reached via a link emailed to the user (from forgot password
+flow). Reads a base64-encoded token from the URL query param
+(?token=...). User sets a new password (same rules as
+register). Sends POST /api/auth/reset-password with the
+token and new password.
 
-Collects branch, status, estimated wait time, and optional
-notes. Sends a POST to /api/reports. If the user is not
-logged in, they are redirected to auth.html. On success the
-report is saved to the database.
+Note: The token is a simple Base64 encoding of the user's
+email — this is a prototype implementation. Production would
+use a time-limited signed token (e.g. JWT or UUID stored in
+DB with expiry).
+
+Loads: (no shared JS, standalone)
+API calls: POST /api/auth/reset-password
+
+STATUS: Fully connected to backend. ✅
+
+----------------------------------------------------------------
+6. report.html — Submit a Queue Report Page
+----------------------------------------------------------------
+Authenticated users submit queue reports here. Branch
+dropdown is dynamically populated from /api/branches. If
+the user came from branch.html via the "+ Add Report" button,
+that branch is pre-selected (read from localStorage).
+
+Fields: branch (required), status (required — Quiet / Busy /
+Very Busy / System Offline), estimated wait time (dropdown
+in minute intervals), and optional notes (free text).
+
+Unauthenticated users get a toast and are redirected to
+auth.html after 2 seconds.
+
+Loads: nav-auth.js
+API calls: GET /api/branches, POST /api/reports
 
 STATUS: Fully connected to backend. Saves to database. ✅
 
 ----------------------------------------------------------------
-6. admin.html — Admin Dashboard Page
+7. admin.html — Admin Dashboard
 ----------------------------------------------------------------
-Protected admin page for moderating user-submitted reports.
-When the page loads it calls /api/auth/me to verify the user
-is logged in AND has the 'admin' role. If not, it shows a
-toast and redirects to auth.html immediately.
+Protected page. On load, calls /api/auth/me and checks that
+the user's Role === 'admin'. If not admin or not logged in,
+redirects to auth.html.
 
-Once authenticated, loads all reports from /api/reports and
-displays them in a table. Flagged reports are highlighted
-in red. The Remove button calls DELETE /api/reports/:id to
-permanently delete the report from the database.
+Shows four stat cards: Total Reports, Flagged Reports,
+Active Branches (hardcoded 31), Registered Users. These
+are populated from GET /api/reports (count + IsFlagged
+filter) and GET /api/reports/stats.
 
-Admin login: admin@queuewatch.co.za / admin123
+Displays all reports in a table with columns: User, Branch,
+Status, Wait, Time, Action. Flagged reports are highlighted.
+The "Remove" button calls DELETE /api/reports/:id and removes
+the row from the DOM on success.
 
-STATUS: Protected. Fully connected to backend. Real delete. ✅
+IMPORTANT: Admin can currently only VIEW and DELETE reports.
+Branch add/edit/deactivate is NOT yet implemented in the
+backend (branches.js has no POST/PUT/DELETE routes).
 
-----------------------------------------------------------------
-7. profile.html — User Profile Page
-----------------------------------------------------------------
-Shows a logged-in user's personal profile and account
-settings. Currently displays static placeholder data.
-The account settings form Save Changes button shows a toast
-but does not yet save to the database.
+Loads: nav-auth.js
+API calls: GET /api/auth/me, GET /api/reports,
+           GET /api/reports/stats, DELETE /api/reports/:id
 
-STATUS: UI complete. Not yet connected to backend. ❌
-TODO: Fetch user from /api/auth/me and their reports from
-/api/reports filtered by UserID.
-
-----------------------------------------------------------------
-8. about.html — About Page
-----------------------------------------------------------------
-Informational page explaining the purpose and background of
-QueueWatch SA. Has a hero section, problem and solution
-sections, a How It Works step guide, team section, and a
-call to action. No backend connection needed.
-
-STATUS: Complete. Static content. ✅
+STATUS: Protected. Report moderation fully connected. ✅
+        Branch management: UI not yet built. ❌
 
 ----------------------------------------------------------------
-9. contact.html — Contact Page
+8. profile.html — User Profile Page
 ----------------------------------------------------------------
-Contact form with fields for name, email, subject, and
-message. Currently shows a toast on submit but does not
-send a real email. Would require Nodemailer or similar in
-the final version. Also shows project info and quick links.
+Protected page. profile.js checks /api/auth/me on load and
+redirects to auth.html if not logged in.
 
-STATUS: UI complete. Not yet wired to email service. ⚠️
+Displays: avatar with initials, full name, email, role badge
+(MEMBER or ADMIN), join date. Three stat cards: Reports
+Submitted, Accuracy Rate (% of non-flagged reports), Branches
+Covered (unique branch count).
+
+Left panel shows the user's own report history (fetched from
+GET /api/reports/user), each card showing branch name, time
+ago, status badge, wait time, notes, and a FLAGGED tag if
+applicable. Empty state shown if no reports yet.
+
+Right panel is the Account Settings form: update name,
+email, and optionally set a new password. Sends PUT
+/api/auth/profile. Password rules enforced client-side.
+
+Loads: nav-auth.js, profile.js
+API calls: GET /api/auth/me, GET /api/reports/user,
+           PUT /api/auth/profile
+
+STATUS: Fully connected to backend. ✅
+        (NOTES.txt was outdated — profile IS wired up)
 
 ----------------------------------------------------------------
-10. 404.html — Page Not Found
+9. about.html — About Page
 ----------------------------------------------------------------
-Error page shown when a user navigates to a URL that does
-not exist. Shows a large 404, a humorous message, and
-buttons to go home or browse branches.
+Fully built informational page. Sections:
+- Hero: mission statement
+- The Problem: stat showing 3+ avg hours wasted per visit
+- Our Solution: community-powered info, no government
+  integration needed
+- How It Works: 4-step guide (Search → Check → Submit → Plan)
+- The Team: Dev Squad card
+- CTA: Register / Browse Branches buttons
 
-STATUS: Complete. Static content. ✅
+No backend connection needed. Static content.
+
+Loads: nav-auth.js
+STATUS: Complete. ✅
+
+----------------------------------------------------------------
+10. contact.html — Contact Page
+----------------------------------------------------------------
+Contact form with fields: Name, Email, Subject (dropdown),
+Message, and CAPTCHA (same SVG captcha as register).
+Sends POST /api/auth/contact. Server validates CAPTCHA,
+then emails the admin via Brevo API.
+
+Note: The contact route lives under /api/auth/contact (not
+/api/contact) because it was added to auth.js.
+
+Quick Links panel shows: About, Branches, Submit Report,
+Join QueueWatch. Project info panel shows module/team/year.
+
+Loads: nav-auth.js
+API calls: POST /api/auth/contact, GET /api/auth/captcha
+
+STATUS: Fully connected to backend. Emails sending. ✅
+
+----------------------------------------------------------------
+11. 404.html — Page Not Found
+----------------------------------------------------------------
+Custom error page. Shows large "404" in Space Mono font, a
+message ("Looks like this page joined the queue and never
+came back"), and two buttons: Go Home and Browse Branches.
+
+Loads: nav-auth.js
+STATUS: Complete. Static. ✅
 
 ================================================================
-SHARED FILES
+SHARED FRONTEND FILES (inside /public/js and /public/css)
 ================================================================
 
 ----------------------------------------------------------------
-11. script.js — Shared JavaScript File
+12. script.js — Core Frontend Controller
 ----------------------------------------------------------------
-The most important frontend JavaScript file. Loaded by
-index.html and branches.html. Fetches all 31 real branch
-data from /api/branches and handles rendering, filtering,
-and navigation.
+Shared JS loaded by index.html and branches.html. Fetches
+all branch data and handles all card rendering and filtering.
 
 Key functions:
-- loadBranches(): fetches from /api/branches and maps API
-  response to frontend format
-- waitLabel(w): converts minutes to "2 hrs wait" etc.
-- timeAgo(dateStr): converts timestamp to "5 min ago" etc.
+- loadBranches(): GET /api/branches, maps API fields to
+  frontend object shape {id, name, type, address, lat, lng,
+  status, wait, reports, updated}
+- waitLabel(w): converts minutes → "30 min wait" / "2 hrs wait"
+- timeAgo(dateStr): timestamp → "5 min ago" / "2 hrs ago"
 - renderCards(list): builds branch cards with onclick that
-  saves branch to localStorage and goes to branch.html
-- updateStats(list): updates quiet/busy/very busy/offline
-  chip counters
-- getFiltered(): filters branches by search and active tab
-- filterCards(): calls getFiltered, renderCards, updateStats
-- setFilter(type, el): updates active tab and re-renders
-- showToast(msg): shows bottom notification for 3 seconds
-- Safety guard: only calls loadBranches() on pages with
-  a branchGrid element
+  saves to localStorage and navigates to branch.html
+- updateStats(list): updates Quiet/Busy/Very Busy/Offline counters
+- filterCards(): combines filter + search, calls renderCards
+- setFilter(type, el): tab filter, updates active class
+- showToast(msg): toast notification, auto-hides after 3s
+- Guard: only runs loadBranches() on pages with #branchGrid
 
-STATUS: Fully connected to /api/branches. ✅
+STATUS: Fully connected. ✅
 
 ----------------------------------------------------------------
-12. style.css — Shared Stylesheet
+13. nav-auth.js — Dynamic Navigation Controller
 ----------------------------------------------------------------
-Single CSS file used by all 10 pages. Uses CSS custom
-properties (variables) in :root for theming.
+Loaded on every page. On DOMContentLoaded, calls
+GET /api/auth/me to check login state.
 
-Key sections: root variables, body/noise overlay, nav,
-buttons, hero, search, stats bar, branch cards, forms,
-toast, auth page, admin stats/table, about page sections,
-branch detail layout (back link, branch hero, detail grid,
-report items, map placeholder, summary card).
+If NOT logged in: hides "Admin" nav link, shows Login +
+Register buttons (default HTML state).
 
-STATUS: Complete. No changes needed. ✅
+If logged in as regular user: hides "Admin" link, replaces
+Login/Register buttons with "{Full Name}" label + Logout.
+
+If logged in as admin: shows ONLY "Admin" link (hides all
+others), shows "ADMIN" yellow badge + Logout button.
+
+handleGlobalLogout(): POST /api/auth/logout → redirect home.
+
+STATUS: Fully connected. Role-based nav working. ✅
+
+----------------------------------------------------------------
+14. profile.js — Profile Page Controller
+----------------------------------------------------------------
+Separate JS file for profile.html. Handles all profile page
+logic including auth check, report loading, stats calculation,
+avatar initials generation, save changes, and logout.
+
+Key functions:
+- Auth check on load → redirect if not logged in
+- loadUserReports(): GET /api/reports/user, calculates stats
+  (reportsCount, uniqueBranches, accuracyRate), renders cards
+- Save Changes handler: PUT /api/auth/profile with fullName,
+  email, optional newPassword. Validates password regex.
+- Logout handler wired to all "index.html" href buttons
+  that say "Logout"
+
+STATUS: Fully connected. ✅
+
+----------------------------------------------------------------
+15. style.css — Shared Stylesheet
+----------------------------------------------------------------
+Single CSS file for all 11 pages. CSS custom properties in
+:root for full dark-theme control.
+
+Key design tokens:
+  --accent:  #f5c518  (brand yellow)
+  --bg:      #0d0f14  (deep dark background)
+  --surface: #13161e  (card/panel background)
+  --surface2:#1a1d23  (input/inner surface)
+  --border:  #252a3a  (subtle borders)
+  --text:    #f0f2f8  (primary text)
+  --muted:   #8892a4  (secondary/label text)
+  --quiet:   #00b894  (green — Quiet status)
+  --busy:    #f39c12  (orange — Busy status)
+  --vbusy:   #eb5e28  (red-orange — Very Busy)
+  --offline: #636e72  (grey — System Offline)
+
+Fonts: Syne (headings, brand), Space Mono (monospace/data)
+Both loaded from Google Fonts.
+
+STATUS: Complete. ✅
 
 ================================================================
 SERVER FILES (inside /server folder)
 ================================================================
 
 ----------------------------------------------------------------
-13. server.js — Express Application Entry Point
+16. server.js — Express Application Entry Point
 ----------------------------------------------------------------
-Main Node.js file that starts the web server on port 3000.
-Sets up Express with CORS, JSON parsing, and session
-middleware. Serves frontend files statically from the parent
-folder. Mounts three API route files under /api. Includes
-a /api/health check endpoint.
+Entry point. Sets up Express with:
+- CORS (origin: true, credentials: true)
+- express.json() + express.urlencoded()
+- express-session (secret from .env, 24h cookie, secure:false)
+- Static file serving from /public (parent of /server)
+- Route mounting: /api/branches, /api/reports, /api/auth
+- GET /api/health endpoint
+- 404 handler for unknown /api/* routes
 
-Run with: node server.js (from inside the /server folder)
+Run: node server.js (from inside /server folder)
+Port: process.env.PORT || 3000
 
-----------------------------------------------------------------
-14. db.js — Database Connection
-----------------------------------------------------------------
-Creates and exports a shared SQL Server connection pool using
-mssql@10.0.4. Reads config from .env. Uses SQL Server
-Authentication. Logs success or exits on failure.
-
-IMPORTANT: Do NOT upgrade mssql — newer versions break on
-this machine. TCP/IP is disabled on Shanita; this config
-works around that using SQL Server Auth on the default port.
+STATUS: ✅
 
 ----------------------------------------------------------------
-15. routes/branches.js — Branches API Routes
+17. db.js — SQLite Database Connection
 ----------------------------------------------------------------
-GET / — returns all 31 branches with live stats calculated
-via SQL subqueries: latest status today, avg wait today,
-total reports today, and time of last report.
-GET /:id — returns a single branch by BranchID.
+Opens a single SQLite database file at /server/database.sqlite
+using the sqlite + sqlite3 packages. Creates all three tables
+on startup if they don't exist (CREATE TABLE IF NOT EXISTS).
+Seeds Branches, Users, and Reports if Branches table is empty.
+
+Tables:
+  Users (UserID, FullName, Email, Password, Role, CreatedAt)
+  Branches (BranchID, Name, Type, Address, Latitude,
+            Longitude, CreatedAt)
+  WaitingTimeReports (ReportID, BranchID, UserID, Status,
+                      WaitMinutes, Notes, IsFlagged, CreatedAt)
+
+Seed data: 8 Gauteng branches, 1 admin user, 1 test user,
+8 sample reports. Admin and test user passwords are stored
+as plain text in seed data (bcrypt comparison handles this
+via the startsWith('$2') check in auth.js login route).
+
+SECURITY NOTE: Production seed data should use pre-hashed
+passwords. Plain text passwords in seed are prototype-only.
+
+Exports: { poolPromise }
+
+STATUS: ✅
 
 ----------------------------------------------------------------
-16. routes/reports.js — Reports API Routes
+18. routes/auth.js — Authentication Routes
 ----------------------------------------------------------------
-GET /branch/:id — all reports for a branch, newest first,
-joined with username. No auth required.
-GET / — all reports for admin dashboard. Admin only.
-POST / — create a new report. Requires active session.
-DELETE /:id — delete a report. Admin only.
-PATCH /:id/flag — flag a report. Admin only.
+All routes mounted under /api/auth.
+
+POST /register
+  - Validates CAPTCHA (req.session.captcha)
+  - Validates password regex (uppercase, lowercase, digit,
+    special char, min 8)
+  - Checks email uniqueness
+  - bcrypt.hash(password, 10)
+  - Inserts user, starts session, sends welcome email async
+
+POST /login
+  - Fetches user by email
+  - bcrypt.compare for hashed passwords; plain === for seeds
+  - Sets req.session.user (UserID, FullName, Email, Role)
+
+POST /logout
+  - req.session.destroy()
+
+GET /me
+  - Returns req.session.user or 401
+
+PUT /profile
+  - Requires session. Updates FullName + Email. Optionally
+    updates password if newPassword provided and passes regex.
+  - Checks email uniqueness against other users.
+
+POST /forgot-password
+  - Looks up user by email (always returns 200 for security)
+  - Generates base64(email) as a prototype reset token
+  - Sends reset link email via Brevo
+
+POST /reset-password
+  - Decodes base64 token → email
+  - Validates password regex
+  - bcrypt.hash and updates DB
+
+POST /contact
+  - Validates CAPTCHA
+  - Sends contact form email to admin via Brevo
+
+GET /captcha
+  - Generates a 5-char alphanumeric SVG CAPTCHA
+  - Stores lowercased answer in req.session.captcha
+  - Returns SVG image (no-cache headers)
+
+Email sending: sendAppEmail() uses Brevo HTTP API directly
+(not nodemailer SMTP) to avoid Render's SMTP port block.
+Falls back to console.log if BREVO_API_KEY not set (dev mode).
+
+STATUS: ✅
 
 ----------------------------------------------------------------
-17. routes/auth.js — Authentication API Routes
+19. routes/branches.js — Branch Routes
 ----------------------------------------------------------------
-POST /register — hashes password with bcryptjs, inserts
-user, starts session.
-POST /login — checks email, compares password (handles both
-hashed and plain text for seed data), creates session.
-POST /logout — destroys session.
-GET /me — returns current logged in user or 401.
+All routes mounted under /api/branches.
+
+GET /
+  - Returns all branches with live computed stats via SQL
+    subqueries: Status (latest today), AvgWait (today),
+    ReportsToday (count today), LastReportAt (most recent ever)
+  - Ordered alphabetically by Name
+
+GET /:id
+  - Returns single branch by BranchID
+
+NOTE: No POST, PUT, or DELETE routes exist. Admin branch
+management (add/edit/deactivate) is NOT yet implemented.
+This is a known gap for future development.
+
+STATUS: Read-only. ✅
+
+----------------------------------------------------------------
+20. routes/reports.js — Report Routes
+----------------------------------------------------------------
+All routes mounted under /api/reports.
+
+GET /branch/:id
+  - Public. All reports for a branch, newest first.
+  - Joins Users to get UserName.
+
+GET /user
+  - Requires session. Returns all reports by the logged-in
+    user. Joins Branches to get BranchName. Includes
+    IsFlagged for accuracy rate calculation.
+
+GET /stats
+  - Admin only. Returns { users: N, branches: N } counts.
+
+GET /
+  - Admin only (no explicit auth check — relies on admin
+    page to guard access). Returns all reports with UserName
+    and BranchName joined.
+
+POST /
+  - Requires session. Validates branchId, status (one of 4
+    valid values), optional waitMinutes and notes.
+
+DELETE /:id
+  - Admin only. Hard deletes report from DB.
+
+PATCH /:id/flag
+  - Admin only. Sets IsFlagged = 1 on report.
+
+STATUS: ✅
+
+================================================================
+ENVIRONMENT & CONFIG
+================================================================
+
+.env (in project root, NOT in /server):
+  SESSION_SECRET=<secret string>
+  BREVO_API_KEY=<Brevo v3 API key>
+  PORT=3000 (optional, defaults to 3000)
+
+.gitignore includes: .env, node_modules/, database.sqlite
+
+package.json (root): scripts start → cd server && node server.js
+package.json (server): dependencies for Express, SQLite, bcrypt,
+  session, cors, dotenv, nodemailer (listed but not used —
+  Brevo HTTP API is used instead to avoid Render SMTP block)
+
+================================================================
+KNOWN GAPS / TODO
+================================================================
+
+1. Admin branch management UI — branches.js has no write
+   routes. Admin cannot add/edit/deactivate branches via
+   the app. Must be done directly in the database.
+
+2. Password reset token security — current token is just
+   base64(email). No expiry, no single-use enforcement.
+   Acceptable for prototype; needs a UUID+expiry in DB
+   for production.
+
+3. GET /api/reports has no admin auth guard server-side —
+   currently relies on the admin.html page to check role
+   before displaying. Should add middleware protection.
+
+4. database.sqlite is not committed to git (.gitignore).
+   On fresh Render deploy, the database is re-seeded from
+   scratch. Persistent disk storage needed for production.
+
+5. 31 Gauteng branches referenced in NOTES and docs, but
+   only 8 are seeded in db.js. The rest were inserted
+   directly in an earlier version. Check the live database
+   to confirm actual branch count.
 
 ================================================================
 END OF FILE NOTES
